@@ -1,0 +1,233 @@
+
+.group {
+	width: 32%;
+	background-color: #0F3189;
+	border-radius: 16px;
+	position: relative;
+	margin-bottom: 16px;
+}
+
+.group:nth-child(3n - 1) {
+	margin-left: 2%;
+	margin-right: 2%;
+}
+
+.group_title {
+	color: #ffffff;
+	font-size: 23px;
+	text-align: start;
+	margin-left: 32px;
+}
+
+.group_title_input {
+	margin-left: 32px;
+	font-size: 23px;
+	display: block;
+	height: 48px;
+	outline: none;
+	width: 120px;
+	border-radius: 8px;
+	padding-left: 8px;
+	padding-right: 8px;
+	margin-top: 16px;
+}
+
+.group_buttons {
+	display: flex;
+	position: absolute;
+	align-items: center;
+	top: 16px;
+	right: 16px;
+}
+
+.group_delete_button {
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	border-top-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	background-color: #ff0000;
+	top: 0px;
+	left: 0px;
+}
+
+.group_delete_button:hover {
+	background-color: #eb1717;
+}
+
+.group_delete_button:active {
+	background-color: #b80606;
+}
+
+.group_delete_icon {
+	width: 16px;
+	height: 16px;
+	fill: #fff;
+	position: absolute;
+	top: 50%; 
+  	left: 50%;
+  	transform: translate(-50%,-50%);
+}
+
+.group_text_button {
+	font-size: 20px;
+	border-radius: 8px;
+	padding-left: 12px;
+	padding-right: 12px;
+	padding-top: 4px;
+	color: #fff;
+	padding-bottom: 4px;
+	background-color: #0094E2;
+}
+
+.group_text_button:hover {
+	background-color: #109de8;
+}
+
+.group_text_button:active {
+	background-color: #0881c2;
+}
+
+.group_button {
+	width: 48px;
+	height: 48px;
+	position: relative;
+	background-color: #0094E2;
+	border-radius: 100px;
+	cursor: pointer;
+	
+}
+
+.group_button:hover {
+	background-color: #109de8;
+}
+
+.group_button:active {
+	background-color: #0881c2;
+}
+
+.export_button {
+	display: inline-block;
+	padding: 16px;
+	margin-bottom: 8px;
+	border-radius: 8px;
+	background-color: #0094E2;
+	color: white;
+}
+
+.export_button:hover {
+	background-color: #109de8;
+}
+
+.export_button:active {
+	background-color: #0881c2;
+}
+
+.group_button_icon {
+	width: 24px;
+	height: 24px;
+	fill: #ffffff;
+	position: absolute;
+  	top: 50%; 
+  	left: 50%;
+  	transform: translate(-50%,-50%);
+}
+
+.student {
+	text-align: start;
+	border-top: 0.5px solid #ffffff;
+	margin-left: 16px;
+	margin-right: 16px;
+}
+
+
+.student_name {
+	display: inline-block;
+	width: 80%;
+	font-size: 18px;
+	font-weight: 500;
+	color: #ffffff;
+}
+
+.student_name_selected {
+	color: #ffff00;	
+}
+
+.student_rating_selected {
+	color: #ffff00;		
+}
+
+.student_rating {
+	display: inline-block;
+	width: 20%;
+	text-align: center;
+	font-size: 18px;
+	font-weight: bold;
+	color: #ffffff;
+}
+
+.total_students_title {
+	color: #ffffff;
+	font-size: 18px;
+	font-weight: 500;
+	margin-left: 32px;
+	text-align: start;
+}
+
+/* empty group */
+
+.group_input_box {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-left: 16px;
+	margin-top: 8px;
+	padding: 16px;
+}
+
+.group_input_title {
+	height: 48px;
+	outline: none;
+	width: 130px;
+	border-radius: 8px;
+	padding-left: 16px;
+	padding-right: 16px;
+	font-size: 23px;
+}
+
+.group_check_button {
+	width: 48px;
+	height: 48px;
+	background-color: #0094E2;
+	border-radius: 100px;
+	position: relative;
+}
+
+.group_check_button:hover {
+	background-color: #109de8;
+}
+
+.group_check_button:active {
+	background-color: #0881c2;
+}
+
+.group_check_icon {
+	fill: #fff;
+	width: 24px;
+	height: 24px;
+	position: absolute;
+  	top: 50%; 
+  	left: 50%;
+  	transform: translate(-50%,-50%);
+}
+
+.group_error {
+	text-align: start;
+	font-size: 20px;
+	color: #ff0000;
+	margin-left: 16px;
+	margin-bottom: 16px;
+	margin-right: 16px;
+	margin-top: 0px;
+}
+
