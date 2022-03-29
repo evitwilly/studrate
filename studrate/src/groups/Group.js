@@ -118,7 +118,7 @@ export default class Group extends React.Component {
 			exportButton = <div className="export_button noselect" onClick={() => {
 				axios.post("http://localhost:3434/groups/export", {group: this.props.group, students: this.props.students}).then(response => {
 					const link = document.createElement("a");
-					link.href = "http://localhost:3434/static/students.xlsx";
+					link.href = response.data.result;
 					link.style = "display: none";
 					document.body.appendChild(link);
 					link.click();

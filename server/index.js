@@ -13,7 +13,6 @@ app.use("/static", express.static(path.join(__dirname, 'static')));
 const port = 3434;
 
 const database_file_path = path.resolve(__dirname, 'database.db');
-const xls_path = path.resolve(__dirname, 'static/students.xlsx');
 const database = new sqlite.Database(database_file_path);
 
 function property(obj, key, defaultValue) {
@@ -46,7 +45,6 @@ function error(message) {
 }
 
 app.post("/groups/export", (req, res) => {
-	console.log(req);
 	const group = req.body.group;
 	const students = req.body.students;
 	console.log(students);
@@ -74,12 +72,15 @@ app.post("/groups/export", (req, res) => {
 		});
 
 
-		console.log(xls_path);
+		const filenames = fs.readdirSync(path.resolve(__dirname, 'static'));
+		filenames.forEach((file) => {
+			fs.unlinkSync(path.resolve(__dirname, 'static/' + file));
+		});
 
+		const xls_path = path.resolve(__dirname, `static/${group.name}.xlsx`);
 
 		workbook.xlsx.writeFile(xls_path).then(() => {
-			res.download(xls_path);
-			// res.json(success(xls_path));
+			res.json(success(`http://localhost:3434/static/${group.name}.xlsx`));
 		});
 	}
 });
