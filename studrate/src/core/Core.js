@@ -1,4 +1,4 @@
-
+import constants from './Constants.js';
 
 function addToStudentArray(students, student) {
     if (students == undefined || students == null) return;
@@ -54,10 +54,9 @@ function reorderGroups(
 	otherStudents2,
 	isLast
 ) {
-    var allStudentsInGroup = 3;
-
-	if (students.length >= allStudentsInGroup) {
-		var lastStudent = students[allStudentsInGroup - 1];
+	const studentCount = constants.studentCount;
+	if (students.length >= studentCount) {
+		var lastStudent = students[studentCount - 1];
 		var lastStudentRating = lastStudent.rating;
 		if (student.rating <= lastStudentRating) {
 			if ((isLast == true && isNotValue(otherStudents2)) || 

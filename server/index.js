@@ -8,11 +8,12 @@ const fs = require("fs");
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use("/static", express.static(path.join(__dirname, 'static')));
 
 const port = 3434;
 
 const database_file_path = path.resolve(__dirname, 'database.db');
-const xls_path = path.resolve(__dirname, 'students.xlsx');
+const xls_path = path.resolve(__dirname, 'static/students.xlsx');
 const database = new sqlite.Database(database_file_path);
 
 function property(obj, key, defaultValue) {
@@ -72,8 +73,13 @@ app.post("/groups/export", (req, res) => {
 			cell.font = { bold: true };
 		});
 
+
+		console.log(xls_path);
+
+
 		workbook.xlsx.writeFile(xls_path).then(() => {
-			res.download(xls_path, "students.xlsx");
+			res.download(xls_path);
+			// res.json(success(xls_path));
 		});
 	}
 });
