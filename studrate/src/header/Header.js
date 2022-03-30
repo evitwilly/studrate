@@ -34,8 +34,8 @@ export default class Header extends React.Component {
 				<h2 className="header_title">StudRate</h2>
 				<div className="search_box">
 					<input className="search_input" placeholder="Поиск" onChange={(target) => this.props.onChange(target.target.value)} />
-					<div className="header_button" onClick={() => this.updateSearch()}>{sortButtonText}</div>
-					<div className="header_button" onClick={() => this.props.addGroup()}>Добавить группу</div>
+					<div className="header_button noselect" onClick={() => this.updateSearch()}>{sortButtonText}</div>
+					<div className="header_button noselect" onClick={() => this.props.addGroup()}>Добавить группу</div>
 				</div>
 			</header>
 		);

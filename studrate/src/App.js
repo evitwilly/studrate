@@ -4,6 +4,7 @@ import React from 'react';
 
 import Header from './header/Header.js';
 import Groups from './groups/Groups.js';
+import Test from './test/Test.js';
 import ratedStudents from './core/Core.js';
 
 import axios from 'axios';
@@ -60,6 +61,7 @@ export default class App extends React.Component {
 		      <Header onChange={this.search} updateSearchType={this.updateSearchType} addGroup={() => {
 		      	this.setState({isAddingGroup: true});
 		      }} />
+		      <Test update={this.update} />
 		      <Groups groups={this.state.groups} 
 		      	cancelAddingGroup={this.cancelAddingGroup}
 		      	update={this.update}
