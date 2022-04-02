@@ -1,0 +1,8 @@
+.group_container {
+	display: flex; 
+	flex-wrap: wrap;
+	flex: 0 0 32%; 
+	max-width: 1300px;
+	margin: 16px auto;
+	
+}

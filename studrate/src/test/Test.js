@@ -14,6 +14,7 @@ export default class Test extends React.Component {
 
 	render() {
 		return <div className="test_box">
+			
 			<input className="test_input" onChange={(event) => {
 				this.setState({test_input_text: event.target.value});
 			}} value={this.state.test_input_text} />

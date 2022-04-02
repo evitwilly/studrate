@@ -3,7 +3,7 @@ import './App.css';
 import React from 'react';
 
 import Header from './header/Header.js';
-import Groups from './groups/Groups.js';
+import StudentDashboard from './student/StudentDashboard.js';
 import Test from './test/Test.js';
 import ratedStudents from './core/Core.js';
 
@@ -62,13 +62,10 @@ export default class App extends React.Component {
 		      	this.setState({isAddingGroup: true});
 		      }} />
 		      <Test update={this.update} />
-		      <Groups groups={this.state.groups} 
-		      	cancelAddingGroup={this.cancelAddingGroup}
+		      <StudentDashboard groups={this.state.groups} 
 		      	update={this.update}
 		      	students={this.state.students} 
 		      	search={this.state.search}
-		      	isAddingGroup={this.state.isAddingGroup}
-		      	 
 		      />
 		    </div>
   		);
