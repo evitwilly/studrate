@@ -1,9 +1,9 @@
-import './Test.css';
+import './Toolbar.css';
 
 import React from 'react';
 import axios from 'axios';
 
-export default class Test extends React.Component {
+export default class Toolbar extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -13,7 +13,7 @@ export default class Test extends React.Component {
 	}
 
 	render() {
-		return <div className="test_box">
+		return <div className="toolbar_box">
 			
 			<input className="test_input" onChange={(event) => {
 				this.setState({test_input_text: event.target.value});

@@ -131,6 +131,8 @@ app.post("/test/remove", (req, res) => {
 	});
 });
 
+
+
 app.post("/groups/export", (req, res) => {
 	const group = req.body.group;
 	const students = req.body.students;
@@ -225,7 +227,7 @@ app.post("/students/add", (req, res) => {
 });
 
 
-app.post("/student/update", (req, res) => {
+app.post("/students/update", (req, res) => {
 	const student = req.body;
 	if (!("id" in student)) {
 		res.json(error("не указан id студента"));
@@ -252,6 +254,16 @@ app.post("/student/update", (req, res) => {
 	}
 });
 
+app.get("/professions", (req, res) => {
+	database.all("select * from professions", (err, data) => {
+		if (err != null && err != undefined) {
+			console.log(err);
+			res.json(error("возникла неизвестная проблема с базой данных"));
+		} else {
+			res.json(success(data));
+		}
+	});
+});
 
 app.get("/groups", (req, res) => {
 	database.all("select * from groups", (err, data) => {
@@ -296,7 +308,7 @@ app.post("/groups/remove", (req, res) => {
 	}
 });
 
-app.post("/groups/updateName", (req, res) => {
+app.post("/groups/update", (req, res) => {
 	const group = req.body;
 	if (!("name" in group)) {
 		res.json(error("не указано название группы"));

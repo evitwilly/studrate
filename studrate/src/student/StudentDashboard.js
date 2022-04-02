@@ -1,40 +1,82 @@
 import './StudentDashboard.css';
 
+import Header from '../header/Header.js';
+import Toolbar from './Toolbar.js';
 import StudentBox from './StudentBox.js';
 
+import constants from '../core/Constants.js';
+import ratedStudents from '../core/Core.js';
+
+
+import axios from 'axios';
 import React from 'react';
 
 export default class StudentDashboard extends React.Component {
 
-
 	constructor(props) {
 		super(props);
+		this.state = { 
+    		groups: [], 
+    		students: {}, 
+    		isAddingGroup: false,
+    		search: { type: "by_group", key: "" } 
+    	};
+    	this.update = this.update.bind(this);
+    	this.toggleSearch = this.toggleSearch.bind(this);
+    	this.search = this.search.bind(this);
 	}
+
+	update() {
+		axios.get(constants.restData.getGroups).then(groupsResponse => {
+			axios.get(constants.restData.getStudents).then(studentsResponse => {
+				if (groupsResponse.data["status"] == "success" && studentsResponse.data["status"] == "success") {
+					const groups = groupsResponse.data["result"];
+					const students = ratedStudents(studentsResponse.data["result"]);
+					this.setState({ groups: groups, students: students });
+				}
+			});
+		});
+	}
+
+	toggleSearch(searchType) {
+		const searchData = { type: searchType, key: this.state.search.key };
+		this.setState({ search: searchData });
+	}
+
+	search(text) {
+		const searchData = { type: this.state.search.type, key: text };
+		this.setState({ search: searchData });
+	}
+
+	componentDidMount() { this.update(); }
 
 	render() {
 		const groups = this.props.groups;
-		const studentsByGroup = this.props.students;
-		const updateFunction = this.props.update;
-		const searchType = this.props.search.type;
+		const searchType = this.state.search.type;
 
 		let groupKey = "";
 		let studentKey = "";
 		if (searchType == "by_group") {
-			groupKey = this.props.search.key;
+			groupKey = this.state.search.key;
 		} else {
-			studentKey = this.props.search.key;
+			studentKey = this.state.search.key;
 		}
 
 		const groupDivs = [];
-		groups.forEach((group) => {
+		this.state.groups.filter((group) => {
+			return this.state.students[group.id] != undefined && this.state.students[group.id].length > 0;
+		}).forEach((group) => {
 			if (groupKey.length <= 0 || group.name.indexOf(groupKey) != -1) {
-				const students = studentsByGroup[group.id];
-				groupDivs.push(<StudentBox group={group} search={studentKey} students={students} update={updateFunction} />);
+				const items = this.state.students[group.id];
+				groupDivs.push(<StudentBox group={group} search={studentKey} students={items} update={this.update} />);
 			}
 		});
 		
-
-		return <div className="group_container">{groupDivs}</div>;
+		return <div>
+			<Header onSearchChange={this.search} toggleSearch={this.toggleSearch} />
+		    <Toolbar update={this.update} />
+		    <div className="group_container">{groupDivs}</div>;
+		</div>;
 	}
 
 	

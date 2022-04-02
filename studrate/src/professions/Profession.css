@@ -1,0 +1,45 @@
+
+.profession_box {
+	margin-left: 16px;
+	margin-right: 16px;
+	margin-bottom: 16px;;
+}
+
+.profession_title {
+	margin-left: 16px;
+}
+
+.profession_item {
+	border-left: 1px solid #000;
+	border-right: 1px solid #000;
+	border-top: 1px solid #000;
+	height: 50px;
+}
+
+.profession_item:first-child {
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+}
+
+.profession_item:last-child {
+	border-bottom: 1px solid #000;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+
+.profession_code {
+	width: 100px;
+	float: left;
+	font-size: 19px;
+	text-align: center;
+	height: 50px;
+	line-height: 50px;
+	border-right: 1px solid #000;
+}
+
+.profession_name {
+	line-height: 50px;
+	font-size: 19px;
+	display: inline-block;
+	margin-left: 16px;
+}

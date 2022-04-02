@@ -40,8 +40,9 @@
 	right: 56px;
 }
 
-.header_button {
+.search_toggle_button {
 	font-size: 20px;
+	text-align: center;
 	border-radius: 8px;
 	text-overflow: ellipsis;
   	white-space: nowrap;
@@ -52,11 +53,11 @@
 	background-color: #0094E2;
 }
 
-.header_button:hover {
+.search_toggle_button:hover {
 	background-color: #109de8;
 }
 
-.header_button:active {
+.search_toggle_button:active {
 	background-color: #0881c2;
 }
 
@@ -71,12 +72,14 @@
 	text-transform: uppercase;
 	color: #fff;
 	font-weight: 600;
+	text-decoration: none;
 	cursor: pointer;
 
 }
 
 .menu_item:hover {
 	color: #0094E2;
+	text-decoration: none;
 }
 
 .menu_button {
