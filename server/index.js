@@ -60,28 +60,21 @@ const lastNames = [
 	"Королёв", "Герасимов", "Пономарёв", "Григорьев"
 ];
 
-const groupNames = [
-	"КСК-19", "АМ-19", "МЭП-19"
-];
 
 app.post("/test/generate", (req, res) => {
 	const student_count = req.body.student_count;
 	database.serialize(() => {
 
-		database.run("delete from groups");
 		database.run("delete from students");
 
-		groupNames.forEach((groupName) => {
-			database.run("insert into groups (name) values (?)", [ groupName ]);
-		});	
-
 		database.all("select * from groups", (err, data) => {
+
 			database.serialize(() => {
 				for (let i = 0; i < student_count; i++) {
 					const firstName = firstNames[Math.round(Math.random() * firstNames.length - 1)];
 					const lastName = lastNames[Math.round(Math.random() * lastNames.length - 1)];
 
-					const groups = [].concat(data);
+					const groups = [].concat(data.slice(0, 3));
 					let index = Math.round(Math.random() * 2);
 					const priorityOne = groups[index].id;
 					groups.splice(index, 1);
@@ -126,7 +119,7 @@ app.post("/test/generate", (req, res) => {
 });
 
 app.post("/test/remove", (req, res) => {
-	database.run("delete from groups").run("delete from students", (err) => {
+	database.run("delete from students", (err) => {
 		res.json(success("успешно удалены все записи из БД"));
 	});
 });

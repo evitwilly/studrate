@@ -70,7 +70,7 @@ const professions = [
 
 database.serialize(() => {
 	database.run("create table if not exists groups (id integer primary key autoincrement, name varchar(20))");	
-	database.run("create table if not exists students (id integer primary key autoincrement, fio varchar(100), rating real, priorityOne integer, prioriyTwo integer, priorityThree integer)");
+	database.run("create table if not exists students (id integer primary key autoincrement, fio varchar(100), rating real, priorityOne integer, priorityTwo integer, priorityThree integer)");
 	database.run("create table if not exists professions (id integer primary key autoincrement, code varchar(10), name varchar(100))");
 
 	const year = (new Date()).getFullYear();

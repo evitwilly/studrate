@@ -7,7 +7,6 @@ import StudentBox from './StudentBox.js';
 import constants from '../core/Constants.js';
 import ratedStudents from '../core/Core.js';
 
-
 import axios from 'axios';
 import React from 'react';
 
@@ -63,9 +62,7 @@ export default class StudentDashboard extends React.Component {
 		}
 
 		const groupDivs = [];
-		this.state.groups.filter((group) => {
-			return this.state.students[group.id] != undefined && this.state.students[group.id].length > 0;
-		}).forEach((group) => {
+		this.state.groups.forEach((group) => {
 			if (groupKey.length <= 0 || group.name.indexOf(groupKey) != -1) {
 				const items = this.state.students[group.id];
 				groupDivs.push(<StudentBox group={group} search={studentKey} students={items} update={this.update} />);

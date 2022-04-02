@@ -1,5 +1,6 @@
 import './Toolbar.css';
 
+import constants from '../core/Constants.js';
 import React from 'react';
 import axios from 'axios';
 
@@ -14,7 +15,6 @@ export default class Toolbar extends React.Component {
 
 	render() {
 		return <div className="toolbar_box">
-			
 			<input className="test_input" onChange={(event) => {
 				this.setState({test_input_text: event.target.value});
 			}} value={this.state.test_input_text} />
@@ -22,7 +22,7 @@ export default class Toolbar extends React.Component {
 				const integer = parseInt(this.state.test_input_text);
 
 				if (!isNaN(integer) && integer > 0 && integer <= 1000) {
-					axios.post("http://localhost:3434/test/generate", {student_count: integer}).then(response => {
+					axios.post(constants.restData.postTestGenerate, {student_count: integer}).then(response => {
 						if (response.data["status"] == "success") {
 							this.props.update();
 						}
@@ -30,7 +30,7 @@ export default class Toolbar extends React.Component {
 				}
 			}}>Сгенерировать</div>
 			<div className="test_button noselect" onClick={() => {
-				axios.post("http://localhost:3434/test/remove").then(response => {
+				axios.post(constants.restData.postTestRemove).then(response => {
 					if (response.data["status"] == "success") {
 						this.props.update();
 					}

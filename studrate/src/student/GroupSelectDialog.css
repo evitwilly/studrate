@@ -11,6 +11,8 @@
 .group_dialog {
     width: 500px;
     margin: 20% auto;
+    padding-left: 16px;
+    padding-right: 16px;
     background-color: #fff;
     border-radius: 16px;
     box-shadow: 1px 1px 5px #000;
@@ -20,7 +22,7 @@
 
 .group_box {
     display: flex;
-    margin-left: 16px;
+
     padding-bottom: 24px;
     position: relative;
 }
@@ -35,4 +37,11 @@
 .group_box__item {
     font-size: 23px;
     margin-right: 16px;
+    padding-top: 8px;
+    cursor: pointer;
+    padding-bottom: 8px;
+}
+
+.group_box__item:hover {
+    color: #0F3189;
 }

@@ -105,7 +105,7 @@ export default class StudentBox extends React.Component {
 					link.click();
 					document.body.removeChild(link);
 				});
-			}}>Экспортировать</div>;
+			}}>Экспорт в Excel файл</div>;
 
 			renderedStudents = students.map((student, index) => {
 

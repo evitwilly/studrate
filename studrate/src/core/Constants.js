@@ -16,6 +16,8 @@ export default {
 		"postStudentRemove" : BASE_URL + "/students/remove",
 		"postStudentUpdate" : BASE_URL + "/students/update",
 		"getProfessions" : BASE_URL + "/professions",
-		"postProfessionAdd" : BASE_URL + "/professions/add"
+		"postProfessionAdd" : BASE_URL + "/professions/add",
+		"postTestGenerate" : BASE_URL + "/test/generate",
+		"postTestRemove" : BASE_URL + "/test/remove"
 	}
 };
