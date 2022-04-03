@@ -1,6 +1,6 @@
 import './StudentBox.css';
 
-import StudentEditDialog from './StudentEditDialog.js';
+import StudentPopupDialog from './StudentPopupDialog.js';
 import StudentAddDialog from './StudentAddDialog.js';
 
 import constants from '../core/Constants.js';
@@ -19,7 +19,7 @@ export default class StudentBox extends React.Component {
     		editable: false, 
     		groupName: this.props.group.name,
     		studentAddingData: { isShowingDialog: false },
-    		studentEditingData: {
+    		studentPopupData: {
     			isShowingDialog: false,
     			dialogCoordinateX: 0,
     			dialogCoordinateY: 0,
@@ -46,14 +46,14 @@ export default class StudentBox extends React.Component {
   		this.setState({studentAddingData: data});
   	}
 
-  	showStudentEditingDialog(student, coordX, coordY) {
+  	showStuudentPopupDialog(student, coordX, coordY) {
   		const data = {
   			isShowingDialog: true,
   			dialogCoordinateX: coordX,
   			dialogCoordinateY: coordY,
   			student: student
   		};
-  		this.setState({studentEditingData: data})
+  		this.setState({studentPopupData: data})
   	}
 
   	dismissStudentEditingDialog() {
@@ -63,7 +63,7 @@ export default class StudentBox extends React.Component {
   			dialogCoordinateY: 0,
   			student: null
   		};
-  		this.setState({studentEditingData: data});
+  		this.setState({studentPopupData: data});
   	}
 
   	expand() {
@@ -116,11 +116,8 @@ export default class StudentBox extends React.Component {
 				if (isVisible) {
 
 					const colorClass = index >= constants.studentCount ? " color_grey_300" : "";
-
-					console.log("student class -> " + colorClass);
-
 					studentElement = <div className="student" key={index.toString()} onClick={(event) => {
-						this.showStudentEditingDialog(student, event.clientX, event.clientY);
+						this.showStuudentPopupDialog(student, event.clientX, event.clientY);
 					}} onDoubleClick={() => this.showStudentUpdateDialog(student)}>
 						<p className={"student_name" + colorClass}>{index + 1}. {student.fio}</p>
 						<p className={"student_rating" + colorClass}>{student.rating}</p>
@@ -155,16 +152,32 @@ export default class StudentBox extends React.Component {
 		}
 
 
-		let studentEditDialog;
-		if (this.state.studentEditingData.isShowingDialog) {
+		let studentPopupDialog;
+		if (this.state.studentPopupData.isShowingDialog) {
 			const styles = {
-				left: this.state.studentEditingData.dialogCoordinateX,
-				top: this.state.studentEditingData.dialogCoordinateY
+				left: this.state.studentPopupData.dialogCoordinateX,
+				top: this.state.studentPopupData.dialogCoordinateY
 			};
-			studentEditDialog = <StudentEditDialog update={this.props.update} 
-				student={this.state.studentEditingData.student} styles={styles}
+			const student = this.state.studentPopupData.student;
+			console.log(student);
+			let secondGroup, thirdGroup;
+			this.props.groups.forEach((group) => {
+				if (group.id == student.priorityTwo) {
+					secondGroup = group;
+				}
+				if (group.id == student.priorityThree) {
+					thirdGroup = group;
+				}
+ 			});
+
+			studentPopupDialog = <StudentPopupDialog update={this.props.update} 
+				student={student} 
+				styles={styles}
+				firstGroup={group}
+				secondGroup={secondGroup}
+				thirdGroup={thirdGroup}
 				dismiss={() => this.dismissStudentEditingDialog()} 
-				edit={() => this.showStudentUpdateDialog(this.state.studentEditingData.student)} />;
+				edit={() => this.showStudentUpdateDialog(this.state.studentPopupData.student)} />;
 		}
 
 		let studentAddDialog;
@@ -185,7 +198,7 @@ export default class StudentBox extends React.Component {
 				<div className="student_box">{renderedStudents}</div>
 				{exportButton}
 				{studentAddDialog}				
-				{studentEditDialog}
+				{studentPopupDialog}
 			</div>
 		);
 	}

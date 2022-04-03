@@ -12,7 +12,8 @@ export default class Professions extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			professions: []
+			professions: [],
+			searchKey: ""
 		};
 	}
 
@@ -25,14 +26,18 @@ export default class Professions extends React.Component {
 	}
 
 	render() {
-		const professionDivs = this.state.professions.map((profession) => {
+		const professionDivs = this.state.professions.filter((profession) => {
+			return profession.name.toLowerCase().indexOf(this.state.searchKey.toLowerCase()) != -1;
+		}).map((profession) => {
 			return <div className="profession_item">
 				<div className="profession_code">{profession.code}</div> 
 				<div className="profession_name">{profession.name}</div>
 			</div>;
 		});
 		return <div>
-			<Header onSearchChange={this.search} toggleSearch={this.toggleSearch} />
+			<Header onSearchChange={(text) => {
+				this.setState({searchKey: text});
+			}} toggleSearch={this.toggleSearch} />
 			<h2 className="profession_title">Специальности</h2>
 			<div className="profession_box">
 				{professionDivs}

@@ -1,4 +1,4 @@
-.student_delete_dialog_container {
+.student_popup_dialog_container {
     position: fixed;
     z-index: 1;
     left: 0;
@@ -7,7 +7,7 @@
     height: 100%;
 }
 
-.student_delete_dialog {
+.student_popup_dialog {
     background-color: #fff;
     border-radius: 4px;
     box-shadow: 1px 1px 5px #000;
@@ -15,14 +15,21 @@
     width: 200px;
 }
 
-.student_delete_dialog__item {
+.student_popup_dialog__item {
     padding: 8px;
     text-align: start;
     font-size: 20px;
     font-weight: 500;
 }
 
-.student_delete_dialog__item:active {
+.student_popup_dialog__item:active {
 	background-color: #0094E2;
 	color: #fff;
+}
+
+.student_popup_dialog___group_item {
+    padding: 4px 8px;
+    text-align: start;
+    font-size: 20px;
+    font-weight: 500;
 }

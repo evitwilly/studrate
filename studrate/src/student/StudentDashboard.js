@@ -50,7 +50,6 @@ export default class StudentDashboard extends React.Component {
 	componentDidMount() { this.update(); }
 
 	render() {
-		const groups = this.props.groups;
 		const searchType = this.state.search.type;
 
 		let groupKey = "";
@@ -65,7 +64,7 @@ export default class StudentDashboard extends React.Component {
 		this.state.groups.forEach((group) => {
 			if (groupKey.length <= 0 || group.name.indexOf(groupKey) != -1) {
 				const items = this.state.students[group.id];
-				groupDivs.push(<StudentBox group={group} search={studentKey} students={items} update={this.update} />);
+				groupDivs.push(<StudentBox group={group} groups={this.state.groups} search={studentKey} students={items} update={this.update} />);
 			}
 		});
 		
