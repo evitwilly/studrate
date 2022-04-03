@@ -30,12 +30,18 @@ export default class Header extends React.Component {
 			sortButtonText = "по студенту";
 		}
 
+		let searchToggleButton;
+		if (this.props.isSearchToggling) {
+			searchToggleButton = <div className="search_toggle_button noselect" onClick={() => this.toggleSearch()}>{sortButtonText}</div>;
+		}
+
+
 		return (
 			<header className="header">
 				<h2 className="header_title">StudRate</h2>
 				<div className="search_box">
 					<input className="search_input" placeholder="Поиск" onChange={(target) => this.props.onSearchChange(target.target.value)} />
-					<div className="search_toggle_button noselect" onClick={() => this.toggleSearch()}>{sortButtonText}</div>
+					{searchToggleButton}
 				</div>
 				<div className="menu_box">
 					<Link to="/groups" className="menu_item noselect">Группы</Link>

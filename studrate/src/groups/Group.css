@@ -1,0 +1,65 @@
+.group_item {
+	width: 210px;
+	height: 70px;
+	margin-left: 8px;
+	border-radius: 8px;
+	margin-right: 8px;
+	margin-bottom: 8px;
+	position: relative;
+	background: #0F3189;
+}
+
+.group_name {
+	text-align: center;
+	color: #fff;
+	padding: 0px;
+	margin: 0px;
+	line-height: 70px;
+	font-size: 26px;
+	font-weight: 500;
+}
+
+.group_delete_button {
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	border-top-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+	background-color: #ff0000;
+	top: 0px;
+	right: 0px;
+}
+
+.group_delete_button:hover {
+	background-color: #eb1717;
+}
+
+.group_delete_button:active {
+	background-color: #b80606;
+}
+
+.group_delete_icon {
+	width: 16px;
+	height: 16px;
+	fill: #fff;
+	position: absolute;
+	top: 50%; 
+  	left: 50%;
+  	transform: translate(-50%,-50%);
+}
+
+.group_input {
+	position: absolute;
+	font-size: 26px;
+	box-sizing: border-box;
+	border-radius: 8px;
+	outline: none;
+	border: none;
+	height: 40px;
+	padding-left: 8px;
+	padding-right: 8px;
+	width: 80%;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}

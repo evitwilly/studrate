@@ -70,7 +70,7 @@ export default class StudentDashboard extends React.Component {
 		});
 		
 		return <div>
-			<Header onSearchChange={this.search} toggleSearch={this.toggleSearch} />
+			<Header onSearchChange={this.search} isSearchToggling={true} toggleSearch={this.toggleSearch} />
 		    <Toolbar update={this.update} />
 		    <div className="group_container">{groupDivs}</div>;
 		</div>;
