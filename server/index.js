@@ -258,6 +258,18 @@ app.get("/professions", (req, res) => {
 	});
 });
 
+app.post("/professions/remove", (req, res) => {
+	const profession = req.body;
+	if (!("id") in profession) {
+		res.json(error("не указан id специальности"));
+	} else {
+		const id = profession.id;
+		database.run("delete from professions where id = ?", [ id ], (err) => {
+			res.json(successMessage("успешно удалена специальность!"));
+		});
+	}
+});
+
 app.post("/professions/add", (req, res) => {
 	const profession = req.body;
 	if (!("name" in profession)) {

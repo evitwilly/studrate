@@ -1,7 +1,7 @@
 import './StudentBox.css';
 
 import StudentPopupDialog from './StudentPopupDialog.js';
-import StudentAddDialog from './StudentAddDialog.js';
+import StudentEditDialog from './StudentEditDialog.js';
 
 import constants from '../core/Constants.js';
 
@@ -36,12 +36,12 @@ export default class StudentBox extends React.Component {
   		this.setState({studentAddingData: data});
   	}
 
-  	showStudentAddDialog() {
+  	showStudentEditDialog() {
   		const data = { isShowingDialog: true };
   		this.setState({studentAddingData: data});
   	}
 
-  	dismissStudentAddDialog() {
+  	dismissStudentEditDialog() {
   		const data = { isShowingDialog: false };
   		this.setState({studentAddingData: data});
   	}
@@ -180,10 +180,10 @@ export default class StudentBox extends React.Component {
 				edit={() => this.showStudentUpdateDialog(this.state.studentPopupData.student)} />;
 		}
 
-		let studentAddDialog;
+		let StudentEditDialog;
 		if (this.state.studentAddingData.isShowingDialog) {
-			studentAddDialog = <StudentAddDialog group={group} student={this.state.studentAddingData.student}
-				update={this.props.update} dismiss={() => this.dismissStudentAddDialog()} />;
+			StudentEditDialog = <StudentEditDialog group={group} student={this.state.studentAddingData.student}
+				update={this.props.update} dismiss={() => this.dismissStudentEditDialog()} />;
 		}
 
 		return (
@@ -191,13 +191,13 @@ export default class StudentBox extends React.Component {
 				{groupTitle}
 				<div className="group_buttons">
 					<div className="group_text_button margin_right_8 noselect" onClick={() => {
-						this.showStudentAddDialog();
+						this.showStudentEditDialog();
 					}}>Добавить<br />студента</div>
 					{collapsedButton}
 				</div>
 				<div className="student_box">{renderedStudents}</div>
 				{exportButton}
-				{studentAddDialog}				
+				{StudentEditDialog}				
 				{studentPopupDialog}
 			</div>
 		);
