@@ -258,6 +258,25 @@ app.get("/professions", (req, res) => {
 	});
 });
 
+app.post("/professions/add", (req, res) => {
+	const profession = req.body;
+	if (!("name" in profession)) {
+		res.json(error("не указано название специальности"));
+	} else if (!("code" in profession)) {
+		res.json(error("не указан код специальности"));
+	} else {
+		const name = profession["name"];
+		const code = profession["code"];
+		database.run("insert into professions (name, code) values (?, ?)", [ name, code ], (err) => {
+			if (err != null && err != undefined) {
+				res.json(error("возникли проблемы при добавлении группы в базу данных"));
+			} else {
+				res.json(successMessage("успешно добавлена группа!"));
+			}
+		})
+	}
+});
+
 app.get("/groups", (req, res) => {
 	database.all("select * from groups", (err, data) => {
 		if (err != null && err != undefined) {

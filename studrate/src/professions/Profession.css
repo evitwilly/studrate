@@ -5,11 +5,23 @@
 	margin-bottom: 16px;;
 }
 
-.profession_title {
+.profession_toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	margin-left: 16px;
+	margin-right: 16px;
+}
+
+.profession_toolbar_button {
+	width: 120px;
+	height: 40px;
+	line-height: 40px;
 }
 
 .profession_item {
+	display: flex;
+	align-items: center;
 	border-left: 1px solid #000;
 	border-right: 1px solid #000;
 	border-top: 1px solid #000;
@@ -29,7 +41,6 @@
 
 .profession_code {
 	width: 100px;
-	float: left;
 	font-size: 19px;
 	text-align: center;
 	height: 50px;
@@ -40,6 +51,40 @@
 .profession_name {
 	line-height: 50px;
 	font-size: 19px;
+	flex: 1;
 	display: inline-block;
 	margin-left: 16px;
 }
+
+.profession_remove_button {
+	width: 32px;
+	height: 32px;
+	margin-right: 16px;
+	margin-left: 16px;
+	border-radius: 8px;
+	position: relative;
+	background-color: #109de8;
+}
+
+.profession_remove_button .profession_remove_button_icon {
+	fill: #fff;
+}
+
+.profession_remove_button:active {
+	color: #fff;
+  	background-color: #0881c2;
+}
+
+.profession_remove_button:active .profession_remove_button_icon {
+	fill: #fff;
+}
+
+.profession_remove_button_icon {
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
