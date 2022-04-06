@@ -40,7 +40,7 @@ export default class ProfessionAddDialog extends React.Component {
 					this.setState({ name: event.target.value });
 				}} />
 				{nameError}
-				<InputMask className="core_dialog_input" alwaysShowMask={true} mask="99.99.99" maskPlaceholder="-" value={this.state.code} onChange={(event) => {
+				<InputMask className="core_dialog_input mb_16" alwaysShowMask={true} mask="99.99.99" maskPlaceholder="-" value={this.state.code} onChange={(event) => {
 					this.setState({ code: event.target.value });
 				}} />
 				{codeError}

@@ -180,9 +180,9 @@ export default class StudentBox extends React.Component {
 				edit={() => this.showStudentUpdateDialog(this.state.studentPopupData.student)} />;
 		}
 
-		let StudentEditDialog;
+		let studentEditDialog;
 		if (this.state.studentAddingData.isShowingDialog) {
-			StudentEditDialog = <StudentEditDialog group={group} student={this.state.studentAddingData.student}
+			studentEditDialog = <StudentEditDialog group={group} student={this.state.studentAddingData.student}
 				update={this.props.update} dismiss={() => this.dismissStudentEditDialog()} />;
 		}
 
@@ -197,7 +197,7 @@ export default class StudentBox extends React.Component {
 				</div>
 				<div className="student_box">{renderedStudents}</div>
 				{exportButton}
-				{StudentEditDialog}				
+				{studentEditDialog}				
 				{studentPopupDialog}
 			</div>
 		);

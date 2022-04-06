@@ -64,7 +64,19 @@ database.serialize(() => {
 				Math.random() * 2 + 3, 
 				priorityOne, 
 				priorityTwo, 
-				priorityThree
+				priorityThree,
+				"23.01.2001",
+				0, 1, "05.04.2022", "Паспорт РФ",
+				"0409", 
+				"145339", 
+				"09.09.2021",
+				"отдел УФМС по Алтайскому краю в г. Рубцовске",
+				0, 1, 1, 0, "Основное общее образование", 
+				"Очное", 
+				"За счет бюджета субъекта РФ",
+				"пр. Ленина, 16", 
+				"пр. Ленина, 16", 
+				"Россия, Алтайский край, г. Рубцовск"
 			];
 			database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree) values (?, ?, ?, ?, ?)", student);
 		}

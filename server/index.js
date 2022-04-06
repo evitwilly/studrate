@@ -61,7 +61,11 @@ const lastNames = [
 ];
 
 
-app.post("/test/generate", (req, res) => {
+/**=================================================
+============== STUDENT API METHODS =================
+===================================================*/
+
+app.post("/students/generate", (req, res) => {
 	const student_count = req.body.student_count;
 	database.serialize(() => {
 
@@ -103,14 +107,27 @@ app.post("/test/generate", (req, res) => {
 						rating, 
 						priorityOne, 
 						priorityTwo, 
-						priorityThree
+						priorityThree,
+						"23.01.2001",
+						0, 1, "05.04.2022", "Паспорт РФ",
+						"0409", 
+						"145339", 
+						"09.09.2021",
+						"отдел УФМС по Алтайскому краю в г. Рубцовске",
+						0, 1, 1, 0, "Основное общее образование", 
+						"Очное", 
+						"За счет бюджета субъекта РФ",
+						"пр. Ленина, 16", 
+						"пр. Ленина, 16", 
+						"Россия, Алтайский край, г. Рубцовск"
+
 					];
+					const sql = "insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, professionId, documentDate, documentType, documentSeria, documentNumber, documentDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 					if (i == student_count - 1)
-						database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree) values (?, ?, ?, ?, ?)", student, (err) => {
+						database.run(sql, student, (err) => {
 							res.json(success("успешно сгенерированы тестовые данные!"));
 						});
-					else
-						database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree) values (?, ?, ?, ?, ?)", student);
+					else database.run(sql, student);
 				}
 			});
 		});	
@@ -118,53 +135,10 @@ app.post("/test/generate", (req, res) => {
 
 });
 
-app.post("/test/remove", (req, res) => {
+app.post("/students/clear", (req, res) => {
 	database.run("delete from students", (err) => {
 		res.json(success("успешно удалены все записи из БД"));
 	});
-});
-
-
-
-app.post("/groups/export", (req, res) => {
-	const group = req.body.group;
-	const students = req.body.students;
-	console.log(students);
-	if (students == undefined || students.length <= 0) {
-		res.json(error("студентов нет"));
-	} else {
-		const workbook = new excel.Workbook();
-		const worksheet = workbook.addWorksheet("студенты_" + group.name);
-
-		worksheet.columns = [
-		    { header: "номер", key: "number", width: 10 }, 
-			{ header: "ФИО", key: "fio", width: 50 }, 
-    		{ header: "балл", key: "rating", width: 10 }
-		];
-
-		let studentNumber = 1;
-		students.forEach((student) => {
-			student.number = studentNumber;
-			worksheet.addRow(student);
-			studentNumber++;
-		});
-
-		worksheet.getRow(1).eachCell((cell) => {
-			cell.font = { bold: true };
-		});
-
-
-		const filenames = fs.readdirSync(path.resolve(__dirname, 'static'));
-		filenames.forEach((file) => {
-			fs.unlinkSync(path.resolve(__dirname, 'static/' + file));
-		});
-
-		const xls_path = path.resolve(__dirname, `static/${group.name}.xlsx`);
-
-		workbook.xlsx.writeFile(xls_path).then(() => {
-			res.json(success(`http://localhost:3434/static/${group.name}.xlsx`));
-		});
-	}
 });
 
 app.get("/students", (req, res) => {
@@ -197,19 +171,26 @@ app.post("/students/remove", (req, res) => {
 
 app.post("/students/add", (req, res) => {
 	const student = req.body;
+	console.log(student);
 	if (!("fio" in student)) {
 		res.json(error("не указана фамилия студента"));
 	} else if (!("rating" in student)) {
 		res.json(error("не указан балл студента"));
-	} else if (!("priority_one" in student)) {
+	} else if (!("priorityOne" in student)) {
 		res.json(error("не указана первая группа для студента"));
 	} else {
-		const fio = student["fio"];
-		const rating = student["rating"];
-		const priorityOne = student["priority_one"];
-		const priorityTwo = property(student, "priority_two", -1);
-		const priorityThree = property(student, "priority_three", -1);
-		database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree) values (?, ?, ?, ?, ?)", [ fio, rating, priorityOne, priorityTwo, priorityThree ], (err) => {
+		
+		database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, professionId, documentDate, documentType, documentSeria, documentNumber, documentDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+			[ 
+				student.fio, student.rating, student.priorityOne, student.priorityTwo,
+				student.priorityThree, student.birthDate, student.isFemale,
+				student.professionId, student.documentDate, student.documentType,
+				student.documentSeria, student.documentNumber, student.documentDate,
+				student.documentGiver, student.isLimitedOpports, student.hasMedicine,
+				student.hasOriginalDocs, student.isInternationalContract, student.educationLevel,
+				student.educationType, student.educationFinancials, student.residentialAddress,
+				student.registrationAddress, student.birthPlace
+			], (err) => {
 			if (err != null && err != undefined) {
 				res.json(error("возникли проблемы при добавлении студента в базу данных"));
 			} else {
@@ -228,16 +209,22 @@ app.post("/students/update", (req, res) => {
 		res.json(error("не указана фамилия студента"));
 	} else if (!("rating" in student)) {
 		res.json(error("не указан балл студента"));
-	} else if (!("priority_one" in student)) {
+	} else if (!("priorityOne" in student)) {
 		res.json(error("не указана первая группа для студента"));
 	} else {
-		const id = student["id"];
-		const fio = student["fio"];
-		const rating = student["rating"];
-		const priorityOne = student["priority_one"];
-		const priorityTwo = property(student, "priority_two", -1);
-		const priorityThree = property(student, "priority_three", -1);
-		database.run("update students set fio = ?, rating = ?, priorityOne = ?, priorityTwo = ?, priorityThree = ? where id = ?", [ fio, rating, priorityOne, priorityTwo, priorityThree, id ], (err) => {
+		const data = [ 
+			student.fio, student.rating, student.priorityOne, student.priorityTwo,
+			student.priorityThree, student.birthDate, student.isFemale,
+			student.professionId, student.documentDate, student.documentType,
+			student.documentSeria, student.documentNumber, student.documentDate,
+			student.documentGiver, student.isLimitedOpports, student.hasMedicine,
+			student.hasOriginalDocs, student.isInternationalContract, student.educationLevel,
+			student.educationType, student.educationFinancials, student.residentialAddress,
+			student.registrationAddress, student.birthPlace, student.id 
+		]
+
+		database.run("update students set fio = ?, rating = ?, priorityOne = ?, priorityTwo = ?, priorityThree = ?, birthDate = ?, isFemale = ?, professionId = ?, documentDate = ?, documentType = ?, documentSeria = ?, documentNumber = ?, documentDate = ?, documentGiver = ?, isLimitedOpports = ?, hasMedicine = ?, hasOriginalDocs = ?, isInternationalContract = ?, educationLevel = ?, educationType = ?, educationFinancials = ?, residentialAddress = ?, registrationAddress = ?, birthPlace = ? where id = ?", 
+			data, (err) => {
 			if (err != null && err != undefined) {
 				res.json(error("возникли проблемы при добавлении студента в базу данных"));
 			} else {
@@ -246,6 +233,10 @@ app.post("/students/update", (req, res) => {
 		});
 	}
 });
+
+/**=================================================
+============== PROFESSION API METHODS ==============
+===================================================*/
 
 app.get("/professions", (req, res) => {
 	database.all("select * from professions", (err, data) => {
@@ -288,6 +279,10 @@ app.post("/professions/add", (req, res) => {
 		})
 	}
 });
+
+/**================================================
+================ GROUP API METHODS ================
+===================================================*/
 
 app.get("/groups", (req, res) => {
 	database.all("select * from groups", (err, data) => {
@@ -345,6 +340,47 @@ app.post("/groups/update", (req, res) => {
 			} else {
 				res.json(successMessage("название группы было успешно обновлено"));
 			}
+		});
+	}
+});
+
+app.post("/groups/export", (req, res) => {
+	const group = req.body.group;
+	const students = req.body.students;
+	console.log(students);
+	if (students == undefined || students.length <= 0) {
+		res.json(error("студентов нет"));
+	} else {
+		const workbook = new excel.Workbook();
+		const worksheet = workbook.addWorksheet("студенты_" + group.name);
+
+		worksheet.columns = [
+		    { header: "номер", key: "number", width: 10 }, 
+			{ header: "ФИО", key: "fio", width: 50 }, 
+    		{ header: "балл", key: "rating", width: 10 }
+		];
+
+		let studentNumber = 1;
+		students.forEach((student) => {
+			student.number = studentNumber;
+			worksheet.addRow(student);
+			studentNumber++;
+		});
+
+		worksheet.getRow(1).eachCell((cell) => {
+			cell.font = { bold: true };
+		});
+
+
+		const filenames = fs.readdirSync(path.resolve(__dirname, 'static'));
+		filenames.forEach((file) => {
+			fs.unlinkSync(path.resolve(__dirname, 'static/' + file));
+		});
+
+		const xls_path = path.resolve(__dirname, `static/${group.name}.xlsx`);
+
+		workbook.xlsx.writeFile(xls_path).then(() => {
+			res.json(success(`http://localhost:3434/static/${group.name}.xlsx`));
 		});
 	}
 });

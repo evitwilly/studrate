@@ -20,3 +20,11 @@
     margin-right: 16px;
 }
 
+.student_edit_dialog {
+    margin-top: 10%;
+    width: 700px;
+}
+
+.student_edit_dialog_title {
+    margin-bottom: 0px;
+}

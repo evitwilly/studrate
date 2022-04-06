@@ -11,14 +11,16 @@ export default {
 		"postGroupRemove" : BASE_URL + "/groups/remove",
 		"postGroupExport" : BASE_URL + "/groups/export",
 		"postGroupUpdate" : BASE_URL + "/groups/update",
+
 		"getStudents" : BASE_URL + "/students",
 		"postStudentAdd" : BASE_URL + "/students/add",
 		"postStudentRemove" : BASE_URL + "/students/remove",
 		"postStudentUpdate" : BASE_URL + "/students/update",
+		"postStudentClear" : BASE_URL + "/students/clear",
+		"postStudentGenerate" : BASE_URL + "/students/generate",
+ 
 		"getProfessions" : BASE_URL + "/professions",
 		"postProfessionAdd" : BASE_URL + "/professions/add",
 		"postProfessionRemove": BASE_URL + "/professions/remove",
-		"postTestGenerate" : BASE_URL + "/test/generate",
-		"postTestRemove" : BASE_URL + "/test/remove"
 	}
 };

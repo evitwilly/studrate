@@ -22,7 +22,7 @@ export default class Toolbar extends React.Component {
 				const integer = parseInt(this.state.test_input_text);
 
 				if (!isNaN(integer) && integer > 0 && integer <= 1000) {
-					axios.post(constants.restData.postTestGenerate, {student_count: integer}).then(response => {
+					axios.post(constants.restData.postStudentGenerate, {student_count: integer}).then(response => {
 						if (response.data["status"] == "success") {
 							this.props.update();
 						}
@@ -30,7 +30,7 @@ export default class Toolbar extends React.Component {
 				}
 			}}>Сгенерировать</div>
 			<div className="test_button noselect" onClick={() => {
-				axios.post(constants.restData.postTestRemove).then(response => {
+				axios.post(constants.restData.postStudentClear).then(response => {
 					if (response.data["status"] == "success") {
 						this.props.update();
 					}
