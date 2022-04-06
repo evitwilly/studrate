@@ -1,6 +1,7 @@
 import './StudentBox.css';
 
 import StudentPopupDialog from './StudentPopupDialog.js';
+import StudentRemoveDialog from './StudentRemoveDialog.js';
 import StudentEditDialog from './StudentEditDialog.js';
 
 import constants from '../core/Constants.js';
@@ -18,6 +19,10 @@ export default class StudentBox extends React.Component {
     		collapsed: true, 
     		editable: false, 
     		groupName: this.props.group.name,
+    		studentRemovingData: {
+    			isShowingDialog: false,
+    			studentId: -1
+    		},
     		studentAddingData: { isShowingDialog: false },
     		studentPopupData: {
     			isShowingDialog: false,
@@ -56,14 +61,15 @@ export default class StudentBox extends React.Component {
   		this.setState({studentPopupData: data})
   	}
 
-  	dismissStudentEditingDialog() {
-  		const data = {
-  			isShowingDialog: false,
-  			dialogCoordinateX: 0,
-  			dialogCoordinateY: 0,
-  			student: null
-  		};
-  		this.setState({studentPopupData: data});
+  	dismissStudentPopupDialog() {
+  		this.setState({
+  			studentPopupData: {
+	  			isShowingDialog: false,
+	  			dialogCoordinateX: 0,
+	  			dialogCoordinateY: 0,
+	  			student: null
+  			}
+  		});
   	}
 
   	expand() {
@@ -76,6 +82,30 @@ export default class StudentBox extends React.Component {
 
   	changeName() {
   		this.setState({ editable: true });
+  	}
+
+  	showStudentRemoveDialog() {
+  		this.setState({
+			studentRemovingData: {
+				isShowingDialog: true,
+				studentId: this.state.studentPopupData.student.id
+			},
+			studentPopupData: {
+				isShowingDialog: false,
+				dialogCoordinateX: 0,
+  				dialogCoordinateY: 0,
+  				student: null
+			}
+		});
+  	}
+
+  	dismissStudentRemoveDialog() {
+  		this.setState({
+  			studentRemovingData: {
+  				isShowingDialog: false,
+  				studentId: -1
+  			}
+  		});
   	}
 
 	render() {
@@ -159,7 +189,6 @@ export default class StudentBox extends React.Component {
 				top: this.state.studentPopupData.dialogCoordinateY
 			};
 			const student = this.state.studentPopupData.student;
-			console.log(student);
 			let secondGroup, thirdGroup;
 			this.props.groups.forEach((group) => {
 				if (group.id == student.priorityTwo) {
@@ -176,8 +205,16 @@ export default class StudentBox extends React.Component {
 				firstGroup={group}
 				secondGroup={secondGroup}
 				thirdGroup={thirdGroup}
-				dismiss={() => this.dismissStudentEditingDialog()} 
-				edit={() => this.showStudentUpdateDialog(this.state.studentPopupData.student)} />;
+				dismiss={() => this.dismissStudentPopupDialog()} 
+				edit={() => this.showStudentUpdateDialog(this.state.studentPopupData.student)}
+				remove={() => this.showStudentRemoveDialog()} />;
+		}
+
+		let studentRemoveDialog;
+		if (this.state.studentRemovingData.isShowingDialog) {
+			studentRemoveDialog = <StudentRemoveDialog studentId={this.state.studentRemovingData.studentId}
+				update={this.props.update} 
+				dismiss={() => this.dismissStudentRemoveDialog()} />
 		}
 
 		let studentEditDialog;
@@ -199,6 +236,7 @@ export default class StudentBox extends React.Component {
 				{exportButton}
 				{studentEditDialog}				
 				{studentPopupDialog}
+				{studentRemoveDialog}
 			</div>
 		);
 	}

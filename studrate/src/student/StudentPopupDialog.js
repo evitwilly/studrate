@@ -36,12 +36,8 @@ export default class StudentPopupDialog extends React.Component {
 					this.props.dismiss();
 				}}>Редактировать</div>
 				<div className="student_popup_dialog__item" onClick={() => {
-					axios.post("http://localhost:3434/students/remove", { id: this.props.student.id }).then(response => {
-						if (response.data["status"] == "success") {
-							this.props.update();
-							this.props.dismiss();
-						}
-					});
+					this.props.remove();
+					this.props.dismiss();
 				}}>Удалить</div>
 			</div>
 		</div>;

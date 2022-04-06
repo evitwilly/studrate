@@ -66,7 +66,11 @@ const lastNames = [
 ===================================================*/
 
 app.post("/students/generate", (req, res) => {
-	const student_count = req.body.student_count;
+	const body = req.body;
+	const groupCount = body.groupCount;
+	const studentCount = body.studentCount;
+	const isTwoGroup = body.isTwoGroup;
+	const isThreeGroup = body.isThreeGroup;
 	database.serialize(() => {
 
 		database.run("delete from students");
@@ -74,28 +78,25 @@ app.post("/students/generate", (req, res) => {
 		database.all("select * from groups", (err, data) => {
 
 			database.serialize(() => {
-				for (let i = 0; i < student_count; i++) {
+				for (let i = 0; i < studentCount; i++) {
 					const firstName = firstNames[Math.round(Math.random() * firstNames.length - 1)];
 					const lastName = lastNames[Math.round(Math.random() * lastNames.length - 1)];
 
-					const groups = [].concat(data.slice(0, 3));
-					let index = Math.round(Math.random() * 2);
+					const groups = [].concat(data.slice(0, groupCount));
+					let index = Math.round(Math.random() * (groups.length - 1));
 					const priorityOne = groups[index].id;
 					groups.splice(index, 1);
-
-					const isPriorityTwo = Math.round(Math.random());
 
 					let priorityTwo = -1;
 					let priorityThree = -1;
 
-					if (isPriorityTwo == 1) {
-						index = Math.round(Math.random());
+					if (isTwoGroup) {
+						index = Math.round(Math.random() * (groups.length - 1));
 						priorityTwo = groups[index].id; 
 
 						groups.splice(index, 1);
 
-						const isPriorityThree = Math.round(Math.random());
-						if (isPriorityThree == 1) {
+						if (isThreeGroup) {
 							priorityThree = groups.pop().id;
 						}
 					}
@@ -123,7 +124,7 @@ app.post("/students/generate", (req, res) => {
 
 					];
 					const sql = "insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, professionId, documentDate, documentType, documentSeria, documentNumber, documentDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-					if (i == student_count - 1)
+					if (i == studentCount - 1)
 						database.run(sql, student, (err) => {
 							res.json(success("успешно сгенерированы тестовые данные!"));
 						});

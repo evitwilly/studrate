@@ -24,12 +24,25 @@
 	background-color: #0881c2;
 }
 
+.test_label {
+	font-size: 18px;
+	margin-right: 8px;
+	display: flex;
+	align-items: center;
+}
+
+.test_checkbox {
+	width: 24px;
+	height: 24px;
+	outline: none;
+}
+
 .test_input {
 	outline: none;
 	border: 3px solid #0881c2;
 	border-radius: 8px;
 	padding-left: 8px;
 	padding-right: 8px;
-	width: 80px;
+	width: 120px;
 	font-size: 23px;
 }
