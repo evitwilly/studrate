@@ -189,7 +189,7 @@ export default class StudentBox extends React.Component {
 				top: this.state.studentPopupData.dialogCoordinateY
 			};
 			const student = this.state.studentPopupData.student;
-			let secondGroup, thirdGroup;
+			let firstGroup, secondGroup, thirdGroup;
 			this.props.groups.forEach((group) => {
 				if (group.id == student.priorityTwo) {
 					secondGroup = group;
@@ -197,12 +197,15 @@ export default class StudentBox extends React.Component {
 				if (group.id == student.priorityThree) {
 					thirdGroup = group;
 				}
+				if (group.id == student.priorityOne) {
+					firstGroup = group;
+				}
  			});
 
 			studentPopupDialog = <StudentPopupDialog update={this.props.update} 
 				student={student} 
 				styles={styles}
-				firstGroup={group}
+				firstGroup={firstGroup}
 				secondGroup={secondGroup}
 				thirdGroup={thirdGroup}
 				dismiss={() => this.dismissStudentPopupDialog()} 
