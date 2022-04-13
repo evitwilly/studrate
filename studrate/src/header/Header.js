@@ -38,7 +38,7 @@ export default class Header extends React.Component {
 
 		return (
 			<header className="header">
-				<h2 className="header_title">StudRate</h2>
+				<Link to="/" className="header_title">StudRate</Link>
 				<div className="search_box">
 					<input className="search_input" placeholder="Поиск" onChange={(target) => this.props.onSearchChange(target.target.value)} />
 					{searchToggleButton}

@@ -113,18 +113,9 @@ export default class StudentBox extends React.Component {
 		const students = this.props.students;	
 		const studentKey = this.props.search;
 
-		//const collapsed = this.state.collapsed || !(studentKey.length > 0 && students.length > 0);
-		const collapsed = this.state.collapsed;
-
-		let exportButton;
+		let exportButton, expandButton;
 		let renderedStudents, collapsedButton;
 		if (students != undefined && students.length > 0) {
-			// if (collapsed) {
-			// 	renderedStudents = <p className="total_students_title">всего студентов: {students.length}</p>
-			// } else {
-				
-			// }
-
 
 			exportButton = <div className="export_button noselect" onClick={() => {
 				axios.post(constants.restData.postGroupExport, {group: this.props.group, students: this.props.students}).then(response => {
@@ -137,7 +128,23 @@ export default class StudentBox extends React.Component {
 				});
 			}}>Экспорт в Excel файл</div>;
 
-			renderedStudents = students.map((student, index) => {
+			const isVisibleExpandButton = studentKey.length <= 0 && students.length > 5;
+			const isCollapsed = this.state.collapsed;
+			if (isVisibleExpandButton) {
+				if (isCollapsed) {
+					expandButton = <div className="collapsed_button" onClick={() => {
+						this.setState({ collapsed: false });
+					}}><svg className="collapsed_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"/></svg></div>;
+				} else {
+					expandButton = <div className="collapsed_button" onClick={() => {
+						this.setState({ collapsed: true });
+					}}><svg className="collapsed_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M374.6 246.6C368.4 252.9 360.2 256 352 256s-16.38-3.125-22.62-9.375L224 141.3V448c0 17.69-14.33 31.1-31.1 31.1S160 465.7 160 448V141.3L54.63 246.6c-12.5 12.5-32.75 12.5-45.25 0s-12.5-32.75 0-45.25l160-160c12.5-12.5 32.75-12.5 45.25 0l160 160C387.1 213.9 387.1 234.1 374.6 246.6z"/></svg></div>;
+				}
+			}
+
+			const end = isCollapsed && isVisibleExpandButton ? 5 : students.length;
+
+			renderedStudents = students.slice(0, end).map((student, index) => {
 
 				const isVisible = studentKey.length <= 0 || student.fio.toLowerCase().indexOf(studentKey.toLowerCase()) != -1;
 
@@ -158,16 +165,13 @@ export default class StudentBox extends React.Component {
 				return studentElement;
 			});
 
-			
-			// if (this.state.collapsed) {
-			// 	collapsedButton = <div className="group_button" onClick={this.expand.bind(this)}>
-			// 		<svg className="group_button_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"/></svg>
-			// 	</div>;
-			// } else {
-			// 	collapsedButton = <div className="group_button" onClick={this.collapse.bind(this)}>
-			// 		<svg className="group_button_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M374.6 246.6C368.4 252.9 360.2 256 352 256s-16.38-3.125-22.62-9.375L224 141.3V448c0 17.69-14.33 31.1-31.1 31.1S160 465.7 160 448V141.3L54.63 246.6c-12.5 12.5-32.75 12.5-45.25 0s-12.5-32.75 0-45.25l160-160c12.5-12.5 32.75-12.5 45.25 0l160 160C387.1 213.9 387.1 234.1 374.6 246.6z"/></svg>
-			// 	</div>;
-			// }
+			if (isCollapsed && isVisibleExpandButton) {
+				renderedStudents.push(<div className="student">
+					<p className="student_name">........</p>
+					<p className="student_rating">...</p>
+				</div>);
+			}
+
 		}
 		
 		let groupTitle;
@@ -230,6 +234,7 @@ export default class StudentBox extends React.Component {
 			<div className="group">
 				{groupTitle}
 				<div className="group_buttons">
+					{expandButton}
 					<div className="group_text_button margin_right_8 noselect" onClick={() => {
 						this.showStudentEditDialog();
 					}}>Добавить<br />студента</div>
