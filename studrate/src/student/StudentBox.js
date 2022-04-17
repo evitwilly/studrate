@@ -3,6 +3,7 @@ import './StudentBox.css';
 import StudentPopupDialog from './StudentPopupDialog.js';
 import StudentRemoveDialog from './StudentRemoveDialog.js';
 import StudentEditDialog from './StudentEditDialog.js';
+import StudentExportDialog from './StudentExportDialog.js';
 
 import constants from '../core/Constants.js';
 
@@ -23,6 +24,7 @@ export default class StudentBox extends React.Component {
     			isShowingDialog: false,
     			studentId: -1
     		},
+    		studentExportingData: { isShowingDialog: false },
     		studentAddingData: { isShowingDialog: false },
     		studentPopupData: {
     			isShowingDialog: false,
@@ -118,13 +120,10 @@ export default class StudentBox extends React.Component {
 		if (students != undefined && students.length > 0) {
 
 			exportButton = <div className="export_button noselect" onClick={() => {
-				axios.post(constants.restData.postGroupExport, {group: this.props.group, students: this.props.students}).then(response => {
-					const link = document.createElement("a");
-					link.href = response.data.result;
-					link.style = "display: none";
-					document.body.appendChild(link);
-					link.click();
-					document.body.removeChild(link);
+				this.setState({
+					studentExportingData: {
+						isShowingDialog: true
+					}
 				});
 			}}>Экспорт в Excel файл</div>;
 
@@ -230,6 +229,13 @@ export default class StudentBox extends React.Component {
 				update={this.props.update} dismiss={() => this.dismissStudentEditDialog()} />;
 		}
 
+		let studentExportingData;
+		if (this.state.studentExportingData.isShowingDialog) {
+			studentExportingData = <StudentExportDialog group={group} students={students} dismiss={() => {
+				this.setState({ studentExportingData: { isShowingDialog: false } });
+			}} />
+		}
+
 		return (
 			<div className="group">
 				{groupTitle}
@@ -245,6 +251,7 @@ export default class StudentBox extends React.Component {
 				{studentEditDialog}				
 				{studentPopupDialog}
 				{studentRemoveDialog}
+				{studentExportingData}
 			</div>
 		);
 	}

@@ -3,6 +3,7 @@ const path = require('path');
 
 const database_file_path = path.resolve(__dirname, 'database.db');
 const database = new sqlite.Database(database_file_path);
+const excel = require("exceljs");
 
 const firstNames = [
 	"Вадим", "Валентин", "Валерий", "Василий", "Вениамин", "Евгений", "Евдоким", "Егор", "Захар", "Зиновий", 
@@ -24,63 +25,91 @@ const groupNames = [
 	"КСК-19", "АМ-19", "МЭП-19"
 ];
 
-database.serialize(() => {
-	database.run("delete from groups");
-	database.run("delete from students");
+database.all("select * from students", (err, students) => {
+	students.forEach((student) => {
+		console.log(student.priorityOne + " : " + student.priorityTwo + " : " + student.priorityThree);
 
-	groupNames.forEach((groupName) => {
-		database.run("insert into groups (name) values (?)", [ groupName ]);
-	});	
-
-	database.all("select * from groups", (err, data) => {
-		for (let i = 0; i < 60; i++) {
-			const firstName = firstNames[Math.round(Math.random() * firstNames.length - 1)];
-			const lastName = lastNames[Math.round(Math.random() * lastNames.length - 1)];
-
-			const groups = [].concat(data);
-			let index = Math.round(Math.random() * 2);
-			const priorityOne = groups[index].id;
-			groups.splice(index, 1);
-
-			const isPriorityTwo = Math.round(Math.random());
-
-			let priorityTwo = -1;
-			let priorityThree = -1;
-
-			if (isPriorityTwo == 1) {
-				index = Math.round(Math.random());
-				priorityTwo = groups[index].id; 
-
-				groups.splice(index, 1);
-
-				const isPriorityThree = Math.round(Math.random());
-				if (isPriorityThree == 1) {
-					priorityThree = groups.pop().id;
-				}
-			}
-
-			const student = [
-				lastName + " " + firstName, 
-				Math.random() * 2 + 3, 
-				priorityOne, 
-				priorityTwo, 
-				priorityThree,
-				"23.01.2001",
-				0, 1, "05.04.2022", "Паспорт РФ",
-				"0409", 
-				"145339", 
-				"09.09.2021",
-				"отдел УФМС по Алтайскому краю в г. Рубцовске",
-				0, 1, 1, 0, "Основное общее образование", 
-				"Очное", 
-				"За счет бюджета субъекта РФ",
-				"пр. Ленина, 16", 
-				"пр. Ленина, 16", 
-				"Россия, Алтайский край, г. Рубцовск"
-			];
-			database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree) values (?, ?, ?, ?, ?)", student);
-		}
-	});	
+	});
 });
 
+database.all("select * from groups", (err, groups) => {
+	groups.forEach((group) => {
+		console.log(group.id);
+	});
+});
 
+	// const workbook = new excel.Workbook(); 
+ //  	workbook.xlsx.readFile('./static/students.xlsx').then(() => {
+  	
+ //  		const year = (new Date()).getFullYear();
+
+ //  		database.all("select * from groups", (err, groups) => {
+  			
+ //  			let currentGroupId = groups[groups.length - 1].id;
+  			
+ //  			database.serialize(() => {
+  				
+ //  				workbook.worksheets.forEach((sheet) => {
+	// 	  			sheet.eachRow({}, (row, number) => {
+		  				
+	// 	    			if (number >= 3) {
+	// 	    				const fio = row.values[3];
+	// 	    				const rating = row.values[4];
+
+	// 	    				const hasOriginalDocs = row.values[5].toLowerCase() == "оригинал" ? 1 : 0;
+	// 	    				const apartaments = (row.values[6] != undefined && row.values[6] != null 
+	// 	    					&& row.values[6].toLowerCase() == "да") ? "Нуждается в общежитии" : "Не требуется";
+		    			
+	// 	    				const firstGroup = row.values[7];
+	// 	    				const secondGroup = row.values[8];
+	// 	    				const thirdGroup = row.values[9];
+
+	// 	    				const foundedFirstGroup = groups.find((group) => group.name.toLowerCase().indexOf(firstGroup.trim().toLowerCase()) == 0);
+	// 	    				let priorityOne = -1;
+	// 	    				if (foundedFirstGroup == undefined || foundedFirstGroup == null) {
+	// 	    					database.run("insert into groups (name) values (?)", [ `${firstGroup.trim()}-${year}` ]);	    					
+	// 	    					priorityOne = currentGroupId + 1;
+	// 	    					currentGroupId++;
+	// 	    				} else {
+	// 	    					priorityOne = foundedFirstGroup.id;
+	// 	    				}
+
+	// 	    				let priorityTwo = -1;
+	// 	    				if (secondGroup != undefined && secondGroup != null && secondGroup.trim().length >= 2) {
+	// 	    					const foundedSecondGroup = groups.find((group) => group.name.toLowerCase().indexOf(secondGroup.trim().toLowerCase()) == 0);
+	// 							if (foundedSecondGroup == undefined || foundedSecondGroup == null) {
+	// 								database.run("insert into groups (name) values (?)", [ `${secondGroup.trim()}-${year}` ]);
+	// 								priorityTwo = currentGroupId + 1;
+	// 								currentGroupId++;
+	// 							} else {
+	// 								priorityTwo = foundedSecondGroup.id;
+	// 							}
+	// 	    				}
+
+	// 	    				let priorityThree = -1;
+
+	// 	    				if (thirdGroup != undefined && thirdGroup != null && thirdGroup.trim().length >= 2) {
+	// 	    					const foundedThirdGroup = groups.find((group) => group.name.toLowerCase().indexOf(thirdGroup.trim().toLowerCase()) == 0);
+	// 							if (foundedThirdGroup == undefined || foundedThirdGroup == null) {
+	// 								database.run("insert into groups (name) values (?)", [ `${thirdGroup.trim()}-${year}` ]);
+	// 								priorityThree = currentGroupId + 1;
+	// 								currentGroupId++;
+	// 							} else {
+	// 								priorityThree = foundedThirdGroup.id;
+	// 							}
+	// 	    				}
+
+	// 	    				const student = [ fio, parseFloat(rating), priorityOne, priorityTwo, priorityThree, "", 0, -1, "", "", "", "Не указано", "", "", "", "", 0, 1, hasOriginalDocs, 0, "Не указано", "Не указано", "Не указано", "", "", "", apartaments ];
+
+	// 						const sql = "insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, professionId, documentSubmissionDate, snils, locality, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	// 						database.run(sql, student);
+	// 	    			}
+		    	
+	// 	    		});
+ //  				});
+  				
+  				
+ //  			});
+ //  		});
+
+ //  	}); 

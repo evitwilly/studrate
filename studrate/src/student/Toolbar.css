@@ -1,12 +1,21 @@
 .toolbar_box {
 	display: flex;
-	padding: 16px;
-	justify-content: end;
+	padding: 16px 32px;
+	align-items: center;
+	justify-content: space-between;
 }
 
-.test_button {
+.toolbar_buttons {
+	display: flex;
+	height: 40px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.toolbar_button {
 	font-size: 20px;
-	padding: 4px;
 	border-radius: 8px;
 	padding-left: 24px;
 	padding-right: 24px;
@@ -16,11 +25,11 @@
 	background-color: #0094E2;
 }
 
-.test_button:hover {
+.toolbar_button:hover {
 	background-color: #109de8;
 }
 
-.test_button:active {
+.toolbar_button:active {
 	background-color: #0881c2;
 }
 

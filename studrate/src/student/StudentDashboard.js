@@ -3,6 +3,7 @@ import './StudentDashboard.css';
 import Header from '../header/Header.js';
 import Toolbar from './Toolbar.js';
 import StudentBox from './StudentBox.js';
+import LoadingDialog from '../core/LoadingDialog.js';
 
 import constants from '../core/Constants.js';
 import ratedStudents from '../core/Core.js';
@@ -17,6 +18,7 @@ export default class StudentDashboard extends React.Component {
 		this.state = { 
     		groups: [], 
     		students: {}, 
+    		isLoading: false,
     		isAddingGroup: false,
     		search: { type: "by_group", key: "" } 
     	};
@@ -67,11 +69,22 @@ export default class StudentDashboard extends React.Component {
 				groupDivs.push(<StudentBox group={group} groups={this.state.groups} search={studentKey} students={items} update={this.update} />);
 			}
 		});
+
+		let loadingView;
+		if (this.state.isLoading) {
+			loadingView = <LoadingDialog title="Импортирование" content="Подождите пожалуйста, файл импортируется..." />
+		}
 		
 		return <div>
 			<Header onSearchChange={this.search} isSearchToggling={true} toggleSearch={this.toggleSearch} />
-		    <Toolbar update={this.update} />
+		    <Toolbar update={() => {
+		    	this.update();
+		    	this.setState({ isLoading: false });
+		    }} onStartImporting={() => {
+		    	this.setState({ isLoading: true });
+		    }} />
 		    <div className="group_container">{groupDivs}</div>;
+		    {loadingView}
 		</div>;
 	}
 

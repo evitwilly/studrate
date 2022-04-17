@@ -107,7 +107,7 @@ export default function ratedStudents(students) {
 			studentsByGroup[student.priorityTwo],
 			studentsByGroup[student.priorityThree]
 		);
-		if (!isFirstGroupReordered) {
+		if (!isFirstGroupReordered && studentsByGroup[student.priorityTwo] != undefined) {
 			var isSecondGroupReordered = reorderGroups(
 				student, studentsByGroup[student.priorityTwo],
 				studentsQueue, 
@@ -115,7 +115,7 @@ export default function ratedStudents(students) {
 				studentsByGroup[student.priorityThree],
 				true
 			);
-			if (!isSecondGroupReordered) {
+			if (!isSecondGroupReordered && studentsByGroup[student.priorityThree] != undefined) {
 				reorderGroups(
 					student, studentsByGroup[student.priorityThree],
 					studentsQueue, 

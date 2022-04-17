@@ -5,14 +5,6 @@
 	margin-left: 8px;
 }
 
-.group_toolbar_title {
-	text-transform: uppercase;
-}
-
-.group_toolbar_buttons {
-
-}
-
 .group_toolbar_box {
 	display: flex;
 	align-items: center;

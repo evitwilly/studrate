@@ -1,0 +1,39 @@
+
+.export_type_box {
+	display: flex;
+	margin-bottom: 8px;
+}
+
+.export_type_box__tab {
+	padding: 8px;
+	flex: 1;
+	font-size: 20px;
+	text-align: center;
+}
+
+.export_type_box__tab_selected {
+	color: #fff;
+	background-color: #0094E2;
+}
+
+.export_field_label {
+	margin-left: 8px;
+	margin-right: 8px;
+	font-size: 18px;
+}
+
+.export_checkbox {
+	margin-left: 8px;
+	width: 18px;
+	height: 18px;
+}
+
+.student_export_dialog {
+	width: 650px;
+}
+
+.student_export_dialog_subtitle {
+	font-size: 20px;
+	margin-left: 8px;
+	margin-bottom: 8px;
+}

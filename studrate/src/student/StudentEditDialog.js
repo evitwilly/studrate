@@ -9,6 +9,7 @@ import React from 'react';
 import axios from 'axios';
 
 const educationLevels = [
+	"Не указано",
 	"Без основного общего образования",
 	"Высшее образование - бакалавриат",
 	"Высшее образование - незаконченное высшее образование",
@@ -23,18 +24,21 @@ const educationLevels = [
 ];
 
 const educationTypes = [
+	"Не указано",
 	"Заочное",
 	"Очно-заочное",
 	"Очное"
 ];
 
 const apartaments = [
+	"Не указано",
 	"Не требуется",
 	"Нуждается в общежитии",
 	"Проживает в общежитии"
 ];
 
 const documentTypes = [
+	"Не указано",
 	"Паспорт РФ",
 	"Вид на жительство",
 	"Военный билет",
@@ -57,6 +61,7 @@ const documentTypes = [
 ];
 
 const financialTypes = [
+	"Не указано",
 	"За счет бюджета субъекта РФ",
 	"За счет бюджета субъекта РФ по договору о целевом обучении",
 	"За счет местного бюджета",
@@ -107,17 +112,23 @@ export default class StudentEditDialog extends React.Component {
 			}, 
 			birthDate: student != undefined ? student.birthDate : "",
 			birthPlace: student != undefined ? student.birthPlace : "",
-			documentDate: student != undefined ? student.documentDate : "",
+			prevEducationDate: student != undefined ? student.prevEducationDate : "",
+			prevEducationOrg: student != undefined ? student.prevEducationOrg : "",
+			documentIssueDate: student != undefined ? student.documentIssueDate : "",
+			documentSubmissionDate: student != undefined ? student.documentSubmissionDate : "",
 			documentType: student != undefined ? student.documentType : documentTypes[0],
 			documentSeria: student != undefined ? student.documentSeria : "",
 			documentNumber: student != undefined ? student.documentNumber : "",
+			apartaments: student != undefined ? student.apartaments : apartaments[0],
+			snils: student != undefined ? student.snils : "",
+			locality: student != undefined ? student.locality : "",
 			documentGiver: student != undefined ? student.documentGiver : "",
 			educationLevel: student != undefined ? student.educationLevel : educationLevels[0],
 			educationType: student != undefined ? student.educationType : educationTypes[0],
 			educationFinancials: student != undefined ? student.educationFinancials : financialTypes[0],
 			residentialAddress: student != undefined ? student.residentialAddress : "",
 			registrationAddress: student != undefined ? student.registrationAddress : "",
-			professionId: student != undefined ? student.professionId : 1,
+			professionId: student != undefined ? student.professionId : -1,
 			isFemale: student != undefined ? student.isFemale : true,
 			isLimitedOpports: student != undefined ? student.isLimitedOpports : false,
 			hasMedicine: student != undefined ? student.hasMedicine : false,
@@ -196,7 +207,7 @@ export default class StudentEditDialog extends React.Component {
 	apply() {
 		
 		const fio = { value: this.fio.value, error: "" };
-		if (fio.value.length <= 0 || fio.value.split(" ").length != 3) {
+		if (fio.value.length <= 0 || fio.value.split(" ").length < 2) {
 			fio.error = "вы некорректно заполнили ФИО студента";
 		}
 
@@ -230,10 +241,16 @@ export default class StudentEditDialog extends React.Component {
 				priorityTwo: priority.priorityTwo,
 				priorityThree: priority.priorityThree,
 				birthDate: this.state.birthDate, 
-				birthPlace: this.state.birhtPlace,
+				birthPlace: this.state.birthPlace,
+				snils: this.state.snils,
+				locality: this.state.locality,
 				isFemale: this.state.isFemale,
+				apartaments: this.state.apartaments,
+				prevEducationDate: this.state.prevEducationDate,
+				prevEducationOrg: this.state.prevEducationOrg,
 				professionId: this.state.professionId, 
-				documentDate: this.state.documentDate, 
+				documentSubmissionDate: this.state.documentSubmissionDate, 
+				documentIssueDate: this.state.documentIssueDate,
 				documentType: this.state.documentType,
 				documentSeria: this.state.documentSeria, 
 				documentNumber: this.state.documentNumber, 
@@ -252,7 +269,6 @@ export default class StudentEditDialog extends React.Component {
 			if (this.props.student != undefined) {
 				student.id = this.props.student.id;
 				axios.post(constants.restData.postStudentUpdate, student).then(response => {
-					console.log(response.data);
 					if (response.data.status == "success") {
 						this.props.dismiss();
 						this.props.update();
@@ -277,7 +293,7 @@ export default class StudentEditDialog extends React.Component {
 
 	componentDidMount() {
 		axios.get(constants.restData.getProfessions).then((response) => {
-			this.setState({ professions: response.data.result });
+			this.setState({ professions: response.data.result.concat([ { id: -1, code: "", name: "Не указано"} ]) });
 		});
 		axios.get(constants.restData.getGroups).then((response) => {
 			this.setState({ groups: response.data.result });
@@ -407,9 +423,21 @@ export default class StudentEditDialog extends React.Component {
 
 					<div className="core_dialog_input_label">дата подачи документов:</div>						
 					<InputMask className="core_dialog_input" alwaysShowMask={true} mask="99.99.9999"
-					value={this.state.documentDate} onChange={(event) => {
-						this.setState({ documentDate: event.target.value });
+					value={this.state.documentSubmissionDate} onChange={(event) => {
+						this.setState({ documentSubmissionDate: event.target.value });
 					}} />
+
+				
+					<div className="core_dialog_input_label">дата окончания предыдущего обучения:</div>						
+					<InputMask className="core_dialog_input" alwaysShowMask={true} mask="99.99.9999"
+					value={this.state.prevEducationDate} onChange={(event) => {
+						this.setState({ prevEducationDate: event.target.value });
+					}} />
+
+					<input className="core_dialog_input" placeholder="предыдущая образовательная организация" maxLength="256"
+						value={this.state.prevEducationOrg} onChange={(event) => {
+							this.setState({ prevEducationOrg: event.target.value });
+						}}  />
 
 					<FormDelimiter />
 
@@ -434,14 +462,19 @@ export default class StudentEditDialog extends React.Component {
 
 					<div className="core_dialog_input_label">дата выдачи документа:</div>
 					<InputMask className="core_dialog_input" alwaysShowMask={true} mask="99.99.9999"
-						value={this.state.birthDate} onChange={(event) => {
-							this.setState({ birthDate: event.target.value });
+						value={this.state.documentIssueDate} onChange={(event) => {
+							this.setState({ documentIssueDate: event.target.value });
 						}} />
 
 					<input className="core_dialog_input" placeholder="кем выдан документ" maxLength="128"
 						value={this.state.documentGiver} onChange={(event) => {
 							this.setState({ documentGiver: event.target.value });
 						}} />
+
+					<div className="core_dialog_input_label">СНИЛС:</div>
+					<InputMask className="core_dialog_input" alwaysShowMask={true} mask="999-999-999 99"
+						value={this.state.snils} 
+						onChange={(event) => this.setState({ snils: event.target.value })} />
 
 					<FormDelimiter />
 
@@ -519,6 +552,15 @@ export default class StudentEditDialog extends React.Component {
 					</div>
 
 					<FormDelimiter />
+
+					<div className="core_dialog_input_label">общежитие:</div>
+					<div className="core_dialog_select_box">
+					<select className="core_dialog_select" value={this.state.apartaments} onChange={(event) => {
+						this.setState({ apartaments: event.target.value });
+					}}>
+						{apartaments.map((apartament) => <option className="core_dialog_option" value={apartament}>{apartament}</option>)}
+					</select>
+					</div>
 					
 					<input className="core_dialog_input" placeholder="адрес проживания" maxLength="500"
 						value={this.state.residentialAddress} 
@@ -530,7 +572,11 @@ export default class StudentEditDialog extends React.Component {
 
 					<input className="core_dialog_input" placeholder="место рождения" maxLength="128"
 						value={this.state.birthPlace}
-						onChange={(event) => this.setState({ brithPlace: event.target.value })} />
+						onChange={(event) => this.setState({ birthPlace: event.target.value })} />
+
+					<input className="core_dialog_input" placeholder="населённый пункт" maxLength="256"
+						value={this.state.locality}
+						onChange={(event) => this.setState({ locality: event.target.value })} />
 
 					<p className="group_priority_text">Первая группа: <span className="group_priority_element" onClick={() => {
 						this.showGroupSelectDialog(1);
