@@ -5,6 +5,7 @@ const path = require('path');
 const fileUpload = require('express-fileupload');
 const excel = require("exceljs");
 const fs = require("fs");
+const iconv = require('iconv-lite');
 
 const app = express();
 app.use("/static", express.static(path.join(__dirname, 'static')));
@@ -262,14 +263,20 @@ app.post("/students/export", (req, res) => {
 		if (type == "csv") {
 			worksheet.spliceRows(0, 1);
 
-			const csv_path = path.resolve(__dirname, `static/${group.name}.csv`);
+			const csvFileName = `static/${group.name}_.csv`;
+			const csvOriginalFileName = `static/${group.name}.csv`;
+			const csv_path = path.resolve(__dirname, csvFileName);
 			workbook.csv.writeFile(csv_path, {
  				formatterOptions: {
 				    delimiter: ';',
 				    quote: false
   				}
 			}).then(() => {
-				res.json(success(`http://localhost:3434/static/${group.name}.csv`));
+				fs.createReadStream(csv_path)
+    				.pipe(iconv.decodeStream('utf8'))
+    				.pipe(iconv.encodeStream('win1251'))
+    				.pipe(fs.createWriteStream(csvOriginalFileName));
+				res.json(success(`http://localhost:3434/${csvOriginalFileName}`));
 			});			
 		} else {
 			const xls_path = path.resolve(__dirname, `static/${group.name}.xlsx`);

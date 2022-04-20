@@ -1,5 +1,7 @@
 const sqlite = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
+const iconv = require('iconv-lite');
 
 const database_file_path = path.resolve(__dirname, 'database.db');
 const database = new sqlite.Database(database_file_path);
@@ -25,18 +27,19 @@ const groupNames = [
 	"КСК-19", "АМ-19", "МЭП-19"
 ];
 
-database.all("select * from students", (err, students) => {
-	students.forEach((student) => {
-		console.log(student.priorityOne + " : " + student.priorityTwo + " : " + student.priorityThree);
 
-	});
-});
+// database.all("select * from students", (err, students) => {
+// 	students.forEach((student) => {
+// 		console.log(student.priorityOne + " : " + student.priorityTwo + " : " + student.priorityThree);
 
-database.all("select * from groups", (err, groups) => {
-	groups.forEach((group) => {
-		console.log(group.id);
-	});
-});
+// 	});
+// });
+
+// database.all("select * from groups", (err, groups) => {
+// 	groups.forEach((group) => {
+// 		console.log(group.id);
+// 	});
+// });
 
 	// const workbook = new excel.Workbook(); 
  //  	workbook.xlsx.readFile('./static/students.xlsx').then(() => {
