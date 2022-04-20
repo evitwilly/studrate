@@ -119,6 +119,7 @@ export default class StudentEditDialog extends React.Component {
 			documentType: student != undefined ? student.documentType : documentTypes[0],
 			documentSeria: student != undefined ? student.documentSeria : "",
 			documentNumber: student != undefined ? student.documentNumber : "",
+			documentOrgCode: student != undefined ? student.documentOrgCode : "",
 			apartaments: student != undefined ? student.apartaments : apartaments[0],
 			snils: student != undefined ? student.snils : "",
 			locality: student != undefined ? student.locality : "",
@@ -255,6 +256,7 @@ export default class StudentEditDialog extends React.Component {
 				documentSeria: this.state.documentSeria, 
 				documentNumber: this.state.documentNumber, 
 				documentGiver: this.state.documentGiver, 
+				documentOrgCode: this.state.documentOrgCode,
 				isLimitedOpports: this.state.isLimitedOpports, 
 				hasMedicine: this.state.hasMedicine,
 				hasOriginalDocs: this.state.hasOriginalDocs, 
@@ -458,6 +460,11 @@ export default class StudentEditDialog extends React.Component {
 					<input className="core_dialog_input" placeholder="номер документа" maxLength="16"
 						value={this.state.documentNumber} onChange={(event) => {
 							this.setState({ documentNumber: event.target.value });
+						}} />
+
+					<input className="core_dialog_input" placeholder="код подразделения" maxLength="32"
+						value={this.state.documentOrgCode} onChange={(event) => {
+							this.setState({ documentOrgCode: event.target.value });
 						}} />
 
 					<div className="core_dialog_input_label">дата выдачи документа:</div>
