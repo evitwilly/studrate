@@ -29,7 +29,7 @@ export default class Toolbar extends React.Component {
 					const formData = new FormData();
 					formData.append("file", file)
 								
-					axios.post("http://localhost:3434/students/import", formData).then((response) => {
+					axios.post(constants.restData.postStudentImport, formData).then((response) => {
 						if (response.data.status == "success") {
 							this.props.update();
 						}
