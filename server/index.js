@@ -419,7 +419,7 @@ app.post("/students/add", (req, res) => {
 		res.json(error("не указана первая группа для студента"));
 	} else {
 		
-		database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, professionId, documentSubmissionDate, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, prevEducationDate, prevEducationOrg, documentOrgCode) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+		database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, professionId, documentSubmissionDate, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, snils, locality, prevEducationDate, prevEducationOrg, documentOrgCode) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
 			[ 
 				student.fio, student.rating, student.priorityOne, student.priorityTwo,
 				student.priorityThree, student.birthDate, student.isFemale,
@@ -428,7 +428,8 @@ app.post("/students/add", (req, res) => {
 				student.documentGiver, student.isLimitedOpports, student.hasMedicine,
 				student.hasOriginalDocs, student.isInternationalContract, student.educationLevel,
 				student.educationType, student.educationFinancials, student.residentialAddress,
-				student.registrationAddress, student.birthPlace, student.apartaments, student.prevEducationDate,
+				student.registrationAddress, student.birthPlace, student.apartaments, 
+				student.snils, student.locality, student.prevEducationDate,
 				student.prevEducationOrg, student.documentOrgCode
 			], (err) => {
 			if (err != null && err != undefined) {
