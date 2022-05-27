@@ -16,7 +16,7 @@ export default class StudentExportDialog extends React.Component {
 			isRating: true,
 			isBirthday: false,
 			isGender: false,
-			isProfessionCode: false,
+			isProfession: false,
 			isDocumentSubmissionDate: false,
 			isDocumentType: false,
 			isDocumentSeria: false,
@@ -65,7 +65,7 @@ export default class StudentExportDialog extends React.Component {
 							isRating: false,
 							isBirthday: false,
 							isGender: false,
-							isProfessionCode: false,
+							isProfession: false,
 							isDocumentSubmissionDate: false,
 							isDocumentType: false,
 							isDocumentSeria: false,
@@ -90,7 +90,7 @@ export default class StudentExportDialog extends React.Component {
 							isRating: true,
 							isBirthday: true,
 							isGender: true,
-							isProfessionCode: true,
+							isProfession: true,
 							isDocumentSubmissionDate: true,
 							isDocumentType: true,
 							isDocumentSeria: true,
@@ -131,9 +131,9 @@ export default class StudentExportDialog extends React.Component {
 					checked={this.state.isGender} onChange={(event) => {
 						this.setState({ isGender: !this.state.isGender })
 					}} type="checkbox"/></label>
-				<label className="export_field_label">Код специальности<input className="export_checkbox" 
-						checked={this.state.isProfessionCode} onChange={(event) => {
-						this.setState({ isProfessionCode: !this.state.isProfessionCode })
+				<label className="export_field_label">Cпециальность<input className="export_checkbox" 
+						checked={this.state.isProfession} onChange={(event) => {
+						this.setState({ isProfession: !this.state.isProfession })
 					}} type="checkbox"/></label>
 				<br />
 				<label className="export_field_label">Дата подачи документов<input className="export_checkbox" 
@@ -247,7 +247,7 @@ export default class StudentExportDialog extends React.Component {
 						isRating: this.state.isRating,
 						isBirthday: this.state.isBirthday,
 						isGender: this.state.isGender,
-						isProfessionCode: this.state.isProfessionCode,
+						isProfession: this.state.isProfession,
 						isDocumentSubmissionDate: this.state.isDocumentSubmissionDate,
 						isDocumentType: this.state.isDocumentType,
 						isDocumentSeria: this.state.isDocumentSeria,

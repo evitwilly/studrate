@@ -2,7 +2,6 @@
 const STUDENT_COUNT_MAX_IN_GROUP = 25;
 const BASE_URL = "http://localhost:3434"
 
-
 export default {
 	"studentCount" : STUDENT_COUNT_MAX_IN_GROUP,
 	"restData": {
@@ -22,6 +21,7 @@ export default {
  
 		"getProfessions" : BASE_URL + "/professions",
 		"postProfessionAdd" : BASE_URL + "/professions/add",
+		"postProfessionUpdate" : BASE_URL + "/professions/update",
 		"postProfessionRemove": BASE_URL + "/professions/remove",
 	}
 };

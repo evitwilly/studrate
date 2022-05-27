@@ -129,7 +129,6 @@ export default class StudentEditDialog extends React.Component {
 			educationFinancials: student != undefined ? student.educationFinancials : financialTypes[0],
 			residentialAddress: student != undefined ? student.residentialAddress : "",
 			registrationAddress: student != undefined ? student.registrationAddress : "",
-			professionId: student != undefined ? student.professionId : -1,
 			isFemale: student != undefined ? student.isFemale : true,
 			isLimitedOpports: student != undefined ? student.isLimitedOpports : false,
 			hasMedicine: student != undefined ? student.hasMedicine : false,
@@ -249,7 +248,6 @@ export default class StudentEditDialog extends React.Component {
 				apartaments: this.state.apartaments,
 				prevEducationDate: this.state.prevEducationDate,
 				prevEducationOrg: this.state.prevEducationOrg,
-				professionId: this.state.professionId, 
 				documentSubmissionDate: this.state.documentSubmissionDate, 
 				documentIssueDate: this.state.documentIssueDate,
 				documentType: this.state.documentType,
@@ -413,15 +411,6 @@ export default class StudentEditDialog extends React.Component {
 					</div>
 
 					<FormDelimiter />
-
-					<div className="core_dialog_input_label">специальность:</div>
-					<div className="core_dialog_select_box">
-					<select className="core_dialog_select" value={this.state.professionId} onChange={(event) => {
-						this.setState({ professionId: event.target.value });
-					}} >
-						{this.state.professions.map((profession) => <option className="core_dialog_option" value={profession.id}>{profession.code + " " + profession.name}</option>)}
-					</select>
-					</div>
 
 					<div className="core_dialog_input_label">дата подачи документов:</div>						
 					<InputMask className="core_dialog_input" alwaysShowMask={true} mask="99.99.9999"

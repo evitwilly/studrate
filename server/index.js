@@ -14,6 +14,9 @@ app.use(express.json());
 app.use(cors());
 app.use(fileUpload());
 
+
+const BASE_URL = "http://localhost:3434"
+
 const port = 3434;
 
 const database_file_path = path.resolve(__dirname, 'database.db');
@@ -118,7 +121,7 @@ app.post("/students/generate", (req, res) => {
 						priorityTwo, 
 						priorityThree,
 						"23.01.2001",
-						0, -1, "05.04.2022", "", "", "Паспорт РФ",
+						0, "05.04.2022", "", "", "Паспорт РФ",
 						"0409", 
 						"145339", 
 						"09.09.2021",
@@ -131,7 +134,7 @@ app.post("/students/generate", (req, res) => {
 						"Россия, Алтайский край, г. Рубцовск", "Не указано", "", ""
 
 					];
-					const sql = "insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, professionId, documentSubmissionDate, snils, locality, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, prevEducationDate, prevEducationOrg) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					const sql = "insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, documentSubmissionDate, snils, locality, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, prevEducationDate, prevEducationOrg) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 					if (i == studentCount - 1)
 						database.run(sql, student, (err) => {
 							res.json(success("успешно сгенерированы тестовые данные!"));
@@ -161,31 +164,31 @@ app.post("/students/export", (req, res) => {
 		const columns = [];
 
 		if (type == "xls") {
-			columns.push({ header: "Номер", key: "number", width: 10 });
-			if (params.isFio) columns.push({ header: "ФИО", key: "fio", width: 40 });
-			if (params.isRating) columns.push({ header: "Средний балл", key: "rating", width: 25 });
-			if (params.isBirthday) columns.push({ header: "Дата рождения", key: "birthDate", width: 30 });
-			if (params.isGender) columns.push({ header: "Пол", key: "gender", width: 15 });
-			if (params.isProfessionCode) columns.push({ header: "Код специальности", key: "professionCode", width: 50 });
-			if (params.isDocumentSubmissionDate) columns.push({ header: "Дата подачи документов", key: "documentSubmissionDate", width: 40 });
-			if (params.isDocumentType) columns.push({ header: "Тип документа", key: "documentType", width: 50 });
-			if (params.isDocumentSeria) columns.push({ header: "Серия документа", key: "documentSeria", width: 40 });
-			if (params.isDocumentNumber) columns.push({ header: "Номер документа", key: "documentNumber", width: 40 });
-			if (params.isDocumentIssueDate) columns.push({ header: "Дата выдачи документа", key: "documentIssueDate", width: 40 });
-			if (params.isDocumentGiver) columns.push({ header: "Кем выдан", key: "documentGiver", width: 50 });
-			if (params.includeIsLimitedOpports) columns.push({ header: "Закончил специальную организацию для учащихся с ОВЗ", key: "isLimitedOpports", width: 80 });
-			if (params.isApartaments) columns.push({ header: "Потребность в общежитии", key: "apartaments", width: 50 });
-			if (params.includeHasMedicine) columns.push({ header: "Имеется медицинская справка", key: "hasMedicine", width: 40 });
-			if (params.includeHasOriginalDocs) columns.push({ header: "Поданы оригиналы документов", key: "hasOriginalDocs", width: 40 });
-			if (params.includeIsInternationalContract) columns.push({ header: "Обучается по международному договору", key: "isInternationalContract", width: 40 });
-			if (params.isEducationLevel) columns.push({ header: "Уровень образования", key: "educationLevel", width: 50 });
-			if (params.isEducationType) columns.push({ header: "Форма образования", key: "educationType", width: 50 });
-			if (params.isEducationFinancials) columns.push({ header: "Финансирование", key: "educationFinancials", width: 50 });
-			if (params.isResidentialAddress) columns.push({ header: "Адрес проживания", key: "residentialAddress", width: 50 });
-			if (params.isRegistrationAddress) columns.push({ header: "Адрес регистрации", key: "registrationAddress", width: 50 });
-			if (params.isBirthPlace) columns.push({ header: "Место рождения", key: "birthPlace", width: 50 });
-			if (params.isSnils) columns.push({ header: "СНИЛС", key: "snils", width: 50 });	
-			if (params.isLocality) columns.push({ header: "Населенный пункт", key: "locality", width: 50 });
+			columns.push({ header: "Номер", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "number", width: 10 });
+			if (params.isFio) columns.push({ header: "ФИО", key: "fio", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+			if (params.isRating) columns.push({ header: "Средний балл", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "rating", width: 25 });
+			if (params.isBirthday) columns.push({ header: "Дата рождения", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "birthDate", width: 30 });
+			if (params.isGender) columns.push({ header: "Пол", key: "gender", style: { alignment: { vertical: 'middle', horizontal: 'left' } },  width: 15 });
+			if (params.isProfession) columns.push({ header: "Специальность", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "profession", width: 100 });
+			if (params.isDocumentSubmissionDate) columns.push({ header: "Дата подачи документов", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "documentSubmissionDate", width: 40 });
+			if (params.isDocumentType) columns.push({ header: "Тип документа", key: "documentType", style: { alignment: { vertical: 'middle', horizontal: 'left' } },  width: 50 });
+			if (params.isDocumentSeria) columns.push({ header: "Серия документа", key: "documentSeria", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+			if (params.isDocumentNumber) columns.push({ header: "Номер документа", key: "documentNumber", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+			if (params.isDocumentIssueDate) columns.push({ header: "Дата выдачи документа", key: "documentIssueDate", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+			if (params.isDocumentGiver) columns.push({ header: "Кем выдан", key: "documentGiver", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+			if (params.includeIsLimitedOpports) columns.push({ header: "Закончил специальную организацию для учащихся с ОВЗ", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "isLimitedOpports", width: 80 });
+			if (params.isApartaments) columns.push({ header: "Потребность в общежитии", key: "apartaments", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+			if (params.includeHasMedicine) columns.push({ header: "Имеется медицинская справка", key: "hasMedicine", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+			if (params.includeHasOriginalDocs) columns.push({ header: "Поданы оригиналы документов", key: "hasOriginalDocs", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+			if (params.includeIsInternationalContract) columns.push({ header: "Обучается по международному договору", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "isInternationalContract", width: 40 });
+			if (params.isEducationLevel) columns.push({ header: "Уровень образования", key: "educationLevel", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+			if (params.isEducationType) columns.push({ header: "Форма образования", key: "educationType", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+			if (params.isEducationFinancials) columns.push({ header: "Финансирование", key: "educationFinancials", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+			if (params.isResidentialAddress) columns.push({ header: "Адрес проживания", key: "residentialAddress", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+			if (params.isRegistrationAddress) columns.push({ header: "Адрес регистрации", key: "registrationAddress", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+			if (params.isBirthPlace) columns.push({ header: "Место рождения", key: "birthPlace", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+			if (params.isSnils) columns.push({ header: "СНИЛС", key: "snils", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });	
+			if (params.isLocality) columns.push({ header: "Населенный пункт", key: "locality", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
 		} else {
 			columns.push({ header: "Фамилия", key: "lastName", width: 50 });
 			columns.push({ header: "Имя", key: "firstName", width: 50 });
@@ -230,6 +233,9 @@ app.post("/students/export", (req, res) => {
 		worksheet.columns = columns;
 
 		let studentNumber = 1;
+
+		const profession = professions.find((profession) => group.name.toLowerCase().startsWith(profession.abbrevation.toLowerCase()));
+
 		students.forEach((student) => {
 			student.number = studentNumber;
 			student.gender = student.isFemale ? "Женский" : "Мужской";
@@ -247,9 +253,13 @@ app.post("/students/export", (req, res) => {
 			student.isInternationalContract = student.isInternationalContract == 1 ? "да" : "нет";
 			student.isLimitedOpports = student.isLimitedOpports == 1 ? "да" : "нет";
 			student.hasMedicine = student.hasMedicine == 1 ? "да" : "нет";
-
-			const profession = professions.find((profession) => profession.id == student.professionId);
-			student.professionCode = profession == undefined || profession == null ? "" : profession.code;
+			
+			if (type == "xls") {
+				student.profession = profession == undefined || profession == null ? ""
+					: profession.code + " " + profession.name;
+			} else {
+				student.professionCode = profession == undefined || profession == null ? "" : profession.code;
+			}
 		
 			worksheet.addRow(student);
 			studentNumber++;
@@ -278,12 +288,12 @@ app.post("/students/export", (req, res) => {
     				.pipe(iconv.decodeStream('utf8'))
     				.pipe(iconv.encodeStream('win1251'))
     				.pipe(fs.createWriteStream(csvOriginalFileName));
-				res.json(success(`http://localhost:3434/${csvOriginalFileName}`));
+				res.json(success(`${BASE_URL}/${csvOriginalFileName}`));
 			});			
 		} else {
 			const xls_path = path.resolve(__dirname, `static/${group.name}.xlsx`);
 			workbook.xlsx.writeFile(xls_path).then(() => {
-				res.json(success(`http://localhost:3434/static/${group.name}.xlsx`));
+				res.json(success(`${BASE_URL}/static/${group.name}.xlsx`));
 			});
 		}		
 	}
@@ -419,11 +429,11 @@ app.post("/students/add", (req, res) => {
 		res.json(error("не указана первая группа для студента"));
 	} else {
 		
-		database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, professionId, documentSubmissionDate, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, snils, locality, prevEducationDate, prevEducationOrg, documentOrgCode) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+		database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, documentSubmissionDate, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, snils, locality, prevEducationDate, prevEducationOrg, documentOrgCode) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
 			[ 
 				student.fio, student.rating, student.priorityOne, student.priorityTwo,
 				student.priorityThree, student.birthDate, student.isFemale,
-				student.professionId, student.documentSubmissionDate, student.documentType,
+				student.documentSubmissionDate, student.documentType,
 				student.documentSeria, student.documentNumber, student.documentIssueDate,
 				student.documentGiver, student.isLimitedOpports, student.hasMedicine,
 				student.hasOriginalDocs, student.isInternationalContract, student.educationLevel,
@@ -455,8 +465,8 @@ app.post("/students/update", (req, res) => {
 	} else {
 		const data = [ 
 			student.fio, student.rating, student.priorityOne, student.priorityTwo,
-			student.priorityThree, student.birthDate, student.isFemale,
-			student.professionId, student.documentSubmissionDate, student.documentType,
+			student.priorityThree, student.birthDate, student.isFemale, student.documentSubmissionDate, 
+			student.documentType,
 			student.documentSeria, student.documentNumber, student.documentIssueDate,
 			student.documentGiver, student.isLimitedOpports, student.hasMedicine,
 			student.hasOriginalDocs, student.isInternationalContract, student.educationLevel,
@@ -466,7 +476,7 @@ app.post("/students/update", (req, res) => {
 			student.documentOrgCode, student.id 
 		]
 
-		database.run("update students set fio = ?, rating = ?, priorityOne = ?, priorityTwo = ?, priorityThree = ?, birthDate = ?, isFemale = ?, professionId = ?, documentSubmissionDate = ?, documentType = ?, documentSeria = ?, documentNumber = ?, documentIssueDate = ?, documentGiver = ?, isLimitedOpports = ?, hasMedicine = ?, hasOriginalDocs = ?, isInternationalContract = ?, educationLevel = ?, educationType = ?, educationFinancials = ?, residentialAddress = ?, registrationAddress = ?, birthPlace = ?, apartaments = ?, snils = ?, locality = ?, prevEducationDate = ?, prevEducationOrg = ?, documentOrgCode = ? where id = ?", 
+		database.run("update students set fio = ?, rating = ?, priorityOne = ?, priorityTwo = ?, priorityThree = ?, birthDate = ?, isFemale = ?, documentSubmissionDate = ?, documentType = ?, documentSeria = ?, documentNumber = ?, documentIssueDate = ?, documentGiver = ?, isLimitedOpports = ?, hasMedicine = ?, hasOriginalDocs = ?, isInternationalContract = ?, educationLevel = ?, educationType = ?, educationFinancials = ?, residentialAddress = ?, registrationAddress = ?, birthPlace = ?, apartaments = ?, snils = ?, locality = ?, prevEducationDate = ?, prevEducationOrg = ?, documentOrgCode = ? where id = ?", 
 			data, (err) => {
 			if (err != null && err != undefined) {
 				res.json(error("возникли проблемы при добавлении студента в базу данных"));
@@ -504,6 +514,32 @@ app.post("/professions/remove", (req, res) => {
 	}
 });
 
+app.post("/professions/update", (req, res) => {
+	const profession = req.body;
+	if (!("id") in profession) {
+		res.json(error("не указан id специальности"));
+	} else if (!("name" in profession)) {
+		res.json(error("не указано название специальности"));
+	} else if (!("code" in profession)) {
+		res.json(error("не указан код специальности"));
+	} else {
+		const id = profession["id"];
+		const name = profession["name"];
+		const code = profession["code"];
+		const abbrevation = profession["abbrevation"];
+		console.log(name);
+		database.run("update professions set name = ?, code = ?, abbrevation = ? where id = ?", 
+			[ name, code, abbrevation, id ], (err) => {
+				console.log(err);
+			if (err != null && err != undefined) {
+				res.json(error("возникли проблемы при обновлении специальности в базе данных"));
+			} else {
+				res.json(successMessage("успешно обновлена специальность!"));
+			}
+		})
+	}
+});
+
 app.post("/professions/add", (req, res) => {
 	const profession = req.body;
 	if (!("name" in profession)) {
@@ -513,11 +549,12 @@ app.post("/professions/add", (req, res) => {
 	} else {
 		const name = profession["name"];
 		const code = profession["code"];
-		database.run("insert into professions (name, code) values (?, ?)", [ name, code ], (err) => {
+		const abbrevation = profession["abbrevation"];
+		database.run("insert into professions (name, code, abbrevation) values (?, ?, ?)", [ name, code, abbrevation ], (err) => {
 			if (err != null && err != undefined) {
-				res.json(error("возникли проблемы при добавлении группы в базу данных"));
+				res.json(error("возникли проблемы при добавлении специальности в базу данных"));
 			} else {
-				res.json(successMessage("успешно добавлена группа!"));
+				res.json(successMessage("успешно добавлена специальность!"));
 			}
 		})
 	}
@@ -544,7 +581,8 @@ app.post("/groups/add", (req, res) => {
 		res.json(error("не указано название группы"));
 	} else {
 		const name = group["name"];
-		database.run("insert into groups (name) values (?)", [ name ], (err) => {
+		const count = group["count"];
+		database.run("insert into groups (name, count) values (?, ?)", [ name, count ], (err) => {
 			if (err != null && err != undefined) {
 				res.json(error("возникли проблемы при добавлении группы в базу данных"))
 			} else {
@@ -577,7 +615,7 @@ app.post("/groups/update", (req, res) => {
 	} else if (!("id" in group)) {
 		res.json(error("не указан id группы"));
 	} else {
-		database.run("update groups set name = ? where id = ?", [ group.name, group.id ], (err) => {
+		database.run("update groups set name = ?, count = ? where id = ?", [ group.name, group.count, group.id ], (err) => {
 			if (err != null && err != undefined) {
 				res.json(error("возникли проблемы при обновлении группы в базе данных"));
 			} else {

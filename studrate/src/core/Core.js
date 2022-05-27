@@ -1,5 +1,3 @@
-import constants from './Constants.js';
-
 function addToStudentArray(students, student) {
     if (students == undefined || students == null) return;
     if (students.length == 0) {
@@ -49,12 +47,12 @@ function isNotValue(students) {
 function reorderGroups(
 	student, 
 	students,
+	studentCount,
 	totalStudents,
 	otherStudents1,
 	otherStudents2,
 	isLast
 ) {
-	const studentCount = constants.studentCount;
 	if (students.length >= studentCount) {
 		var lastStudent = students[studentCount - 1];
 		var lastStudentRating = lastStudent.rating;
@@ -84,7 +82,7 @@ function reorderGroups(
 	return true;
 }
 
-export default function ratedStudents(students) {
+export default function ratedStudents(groups, students) {
     var studentsByGroup = {};
     students.forEach(function (student) {
 		if (studentsByGroup[student.priorityOne] == undefined) {
@@ -102,14 +100,18 @@ export default function ratedStudents(students) {
 	while (studentsQueue.length > 0) {
 		var student = studentsQueue.shift();
 		var isFirstGroupReordered = reorderGroups(
-			student, studentsByGroup[student.priorityOne],
+			student, 
+			studentsByGroup[student.priorityOne],
+			groups.find((group) => group.id == student.priorityOne).count,
 			studentsQueue, 
 			studentsByGroup[student.priorityTwo],
 			studentsByGroup[student.priorityThree]
 		);
 		if (!isFirstGroupReordered && studentsByGroup[student.priorityTwo] != undefined) {
 			var isSecondGroupReordered = reorderGroups(
-				student, studentsByGroup[student.priorityTwo],
+				student, 
+				studentsByGroup[student.priorityTwo],
+				groups.find((group) => group.id == student.priorityTwo).count,
 				studentsQueue, 
 				studentsByGroup[student.priorityOne],
 				studentsByGroup[student.priorityThree],
@@ -117,7 +119,9 @@ export default function ratedStudents(students) {
 			);
 			if (!isSecondGroupReordered && studentsByGroup[student.priorityThree] != undefined) {
 				reorderGroups(
-					student, studentsByGroup[student.priorityThree],
+					student, 
+					studentsByGroup[student.priorityThree],
+					groups.find((group) => group.id == student.priorityThree).count,
 					studentsQueue, 
 					studentsByGroup[student.priorityOne],
 					studentsByGroup[student.priorityTwo]
@@ -127,19 +131,3 @@ export default function ratedStudents(students) {
 	}
 	return studentsByGroup;
 }
-
-// var students = [
-//     { "id" : 0, "fio" : "Student 1", "rating" : 4.5, "priority_one" : 0 },
-//     { "id" : 1, "fio" : "Student 2", "rating" : 4.2, "priority_one" : 0 },
-//     { "id" : 2, "fio" : "Student 3", "rating" : 4.1, "priority_one" : 0, "priority_two" : 1 },
-//     { "id" : 3, "fio" : "Student 4", "rating" : 4.0, "priority_one" : 0, "priority_two" : 1 },
-//     { "id" : 4, "fio" : "Student 5", "rating" : 4.1, "priority_one" : 1 },
-//     { "id" : 5, "fio" : "Student 6", "rating" : 4.0, "priority_one" : 1 },
-//     { "id" : 6, "fio" : "Student 7", "rating" : 3.9, "priority_one" : 1, "priority_two" : 2 },
-//     { "id" : 7, "fio" : "Student 8", "rating" : 3.9, "priority_one" : 2 },
-//     { "id" : 8, "fio" : "Student 9", "rating" : 3.6, "priority_one" : 2 },
-//     { "id" : 9, "fio" : "Student 10", "rating" : 3.5, "priority_one" : 2 },
-//     { "id" : 10, "fio" : "Student 11", "rating" : 5.0, "priority_one" : 0, "priority_two" : 1 }
-// ];
-
-// console.log(ratedStudents(students));

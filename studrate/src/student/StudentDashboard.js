@@ -32,7 +32,7 @@ export default class StudentDashboard extends React.Component {
 			axios.get(constants.restData.getStudents).then(studentsResponse => {
 				if (groupsResponse.data["status"] == "success" && studentsResponse.data["status"] == "success") {
 					const groups = groupsResponse.data["result"];
-					const students = ratedStudents(studentsResponse.data["result"]);
+					const students = ratedStudents(groups, studentsResponse.data["result"]);
 					this.setState({ groups: groups, students: students });
 				}
 			});

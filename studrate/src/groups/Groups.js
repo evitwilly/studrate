@@ -16,6 +16,10 @@ export default class Groups extends React.Component {
 		super(props);
 		this.state = {
 			isAddingGroup: false,
+			isEditingGroup: {
+				isShowingDialog: false,
+				group: null
+			},
 			removing: {
 				isShowingDialog: false,
 				groupId: -1
@@ -39,7 +43,10 @@ export default class Groups extends React.Component {
 		const groupDivs = this.state.groups.filter((group) => {
 			return group.name.toLowerCase().indexOf(this.state.searchKey.toLowerCase()) != -1;
 		}).map((group) => {
-			return <Group group={group} update={() => this.getGroups()} showDialog={() => {
+			return <Group group={group} edit={() => this.setState({ isEditingGroup: {
+				isShowingDialog: true, group: group
+			} })} 
+				update={() => this.getGroups()} showDialog={() => {
 				this.setState({
 					removing: {
 						isShowingDialog: true,
@@ -72,6 +79,15 @@ export default class Groups extends React.Component {
 			}} />;
 		}
 
+		let editingGroupView;
+		if (this.state.isEditingGroup.isShowingDialog) {
+			editingGroupView = <GroupAddDialog group={this.state.isEditingGroup.group} dismiss={() => {
+				this.setState({isEditingGroup: { isShowingDialog: false, group: null } });
+			}} update={() => {
+				this.getGroups();
+			}} />
+		}
+
 		return <div>
 			<Header onSearchChange={(text) => {
 				this.setState({searchKey: text});
@@ -89,6 +105,7 @@ export default class Groups extends React.Component {
 			</div>
 			{addingGroupView}
 			{removingGroupView}
+			{editingGroupView}
 		</div>
 	}
 }
