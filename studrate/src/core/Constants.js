@@ -23,5 +23,7 @@ export default {
 		"postProfessionAdd" : BASE_URL + "/professions/add",
 		"postProfessionUpdate" : BASE_URL + "/professions/update",
 		"postProfessionRemove": BASE_URL + "/professions/remove",
+
+		"postStatisticsExport" : BASE_URL + "/students/statistics/export"
 	}
 };

@@ -82,6 +82,18 @@ export default class StudentDashboard extends React.Component {
 		    	this.setState({ isLoading: false });
 		    }} onStartImporting={() => {
 		    	this.setState({ isLoading: true });
+		    }} onStatisticsImport={() => {
+		    	axios.post(constants.restData.postStatisticsExport, {
+		    		groups: this.state.groups,
+		    		students: this.state.students
+		    	}).then(response => {
+	    			const link = document.createElement("a");
+					link.href = response.data.result;
+					link.style = "display: none";
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+		    	});
 		    }} />
 		    <div className="group_container">{groupDivs}</div>;
 		    {loadingView}

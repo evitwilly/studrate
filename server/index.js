@@ -147,6 +147,58 @@ app.post("/students/generate", (req, res) => {
 
 });
 
+app.post("/students/statistics/export", (req, res) => {
+	const groups = req.body.groups;
+	const ratedStudents = req.body.students;
+
+	const workbook = new excel.Workbook();
+	const worksheet = workbook.addWorksheet("кол-во поданных заявлений");
+
+	const columns = [];
+
+	columns.push({ header: "Номер", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "number", width: 10 });
+	columns.push({ header: "Группа", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "groupName", width: 15 });
+	columns.push({ header: "Кол-во поданных заявлений", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "count", width: 40 });
+	columns.push({ header: "Максимальное кол-во заявлений", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "maxCount", width: 46 });
+	columns.push({ header: "Процент проходимости", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "percent", width: 30 });
+
+	worksheet.columns = columns;
+
+	let number = 1;
+
+	groups.forEach((group) => {
+		const count = ratedStudents[group.id] == undefined ? 0 : ratedStudents[group.id].length;
+		const maxCount = group.count;
+
+		const stat = {
+			number: number,
+			groupName: group.name,
+			count: count,
+			maxCount: maxCount,
+			percent: Math.round(count / maxCount * 100) + "%"
+		};
+		worksheet.addRow(stat);
+
+		number += 1;
+	});
+
+	worksheet.getRow(1).eachCell((cell) => {
+		cell.font = { bold: true };
+	});
+
+	console.log(worksheet);
+
+	const filenames = fs.readdirSync(path.resolve(__dirname, 'static'));
+	filenames.forEach((file) => fs.unlinkSync(path.resolve(__dirname, 'static/' + file)));
+
+	const filename = "статистика_поданных_заявлений"
+	const xls_path = path.resolve(__dirname, `static/${filename}.xlsx`);
+	workbook.xlsx.writeFile(xls_path).then(() => {
+		res.json(success(`${BASE_URL}/static/${filename}.xlsx`));
+	});
+
+});
+
 app.post("/students/export", (req, res) => {
 	const params = req.body;
 

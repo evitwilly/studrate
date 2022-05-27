@@ -20,6 +20,9 @@ export default class Toolbar extends React.Component {
 		return <div className="toolbar_box">
 			<h2 className="toolbar_title">Студенты</h2>
 			<div className="toolbar_buttons">
+				<div className="toolbar_button noselect" onClick={() => {
+					this.props.onStatisticsImport();
+				}}>Статистика поданных заявлений</div>
 				<label className="toolbar_button noselect" onChange={(event) => {
 
 					this.props.onStartImporting();
