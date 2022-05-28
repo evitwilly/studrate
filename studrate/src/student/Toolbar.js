@@ -4,6 +4,33 @@ import constants from '../core/Constants.js';
 import React from 'react';
 import axios from 'axios';
 
+class BookList extends React.Component {
+
+	constructor(props) {
+
+		const myBooks = [
+			{ id: 1, name: "Мартин Иден", author: "Джек Лондон" }
+		];
+
+		this.state = {
+			books: myBooks
+		};
+	}
+
+	render() {
+
+		const bookViews = [];
+
+		this.state.books.forEach((book) => {
+			bookViews.push(<li>{book.name}</li>)
+		});
+
+		return <ul>
+			{}
+		</ul>
+	}
+}
+
 export default class Toolbar extends React.Component {
 
 	constructor(props) {

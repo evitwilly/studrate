@@ -10,8 +10,6 @@ import constants from '../core/Constants.js';
 import React from 'react';
 import axios from 'axios';
 
-const downloader = require('js-file-download');
-
 export default class StudentBox extends React.Component {
 
 	constructor(props) {

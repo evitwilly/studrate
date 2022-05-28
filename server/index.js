@@ -51,6 +51,144 @@ function error(message) {
 	};
 }
 
+// students rating
+
+function addToStudentArray(students, student) {
+    if (students == undefined || students == null) return;
+    if (students.length == 0) {
+        students.push(student);
+        return;   
+    }
+    var studentIndex = -1;
+    for (var i = 0; i < students.length; i++) {
+        if (students[i].id == student.id) {
+            studentIndex = i;
+            break;
+        }
+    }
+    if (studentIndex == -1) {
+        for (var i = 0; i < students.length; i++) {
+            if (student.rating > students[i].rating) {
+                if (i == 0) {
+                    students.splice(0, 0, student);
+                    break;
+                } else {
+                    students.splice(i, 0, student);
+                    break;
+                }
+            } else if (i == students.length - 1) {
+                students.push(student);
+                break;
+            }
+        }
+    }
+}
+
+function removeFromStudentArray(students, student) {
+  if (students == undefined || students == null) return;
+  for (var i = 0; i < students.length; i++) {
+    if (students[i].id == student.id) {
+        students.splice(i, 1);
+        break;
+    }
+  }
+}
+
+
+function isNotValue(students) {
+    return students == undefined || students == null;
+}
+
+function reorderGroups(
+	student, 
+	students,
+	studentCount,
+	totalStudents,
+	otherStudents1,
+	otherStudents2,
+	isLast
+) {
+	if (students.length >= studentCount) {
+		var lastStudent = students[studentCount - 1];
+		var lastStudentRating = lastStudent.rating;
+		if (student.rating <= lastStudentRating) {
+			if ((isLast == true && isNotValue(otherStudents2)) || 
+			(isNotValue(otherStudents1) && isNotValue(otherStudents2))) {
+			    addToStudentArray(students, student);
+				removeFromStudentArray(otherStudents1, student);
+				removeFromStudentArray(otherStudents2, student);
+			} else return false;
+		} else {
+		    
+			totalStudents.push(lastStudent);
+
+			addToStudentArray(students, student);
+			removeFromStudentArray(otherStudents1, student);
+			removeFromStudentArray(otherStudents2, student);
+
+ 
+            removeFromStudentArray(totalStudents, student);
+		}
+	} else {
+	    addToStudentArray(students, student);
+	    removeFromStudentArray(otherStudents1, student);
+	    removeFromStudentArray(otherStudents2, student);
+	}
+	return true;
+}
+
+function ratedStudents(groups, students) {
+    var studentsByGroup = {};
+    students.forEach(function (student) {
+		if (studentsByGroup[student.priorityOne] == undefined) {
+			studentsByGroup[student.priorityOne] = [];
+		}
+		if (student.priorityTwo != -1 && studentsByGroup[student.priorityTwo]) {
+			studentsByGroup[student.priorityTwo] = [];
+		}
+		if (student.priorityThree != -1 && studentsByGroup[student.priorityThree]) {
+			studentsByGroup[student.priorityThree] = [];
+		}
+		addToStudentArray(studentsByGroup[student.priorityOne], student);	
+	});	
+	var studentsQueue = [].concat(students);
+	while (studentsQueue.length > 0) {
+		var student = studentsQueue.shift();
+		var isFirstGroupReordered = reorderGroups(
+			student, 
+			studentsByGroup[student.priorityOne],
+			groups.find((group) => group.id == student.priorityOne).count,
+			studentsQueue, 
+			studentsByGroup[student.priorityTwo],
+			studentsByGroup[student.priorityThree]
+		);
+		if (!isFirstGroupReordered && studentsByGroup[student.priorityTwo] != undefined) {
+			var isSecondGroupReordered = reorderGroups(
+				student, 
+				studentsByGroup[student.priorityTwo],
+				groups.find((group) => group.id == student.priorityTwo).count,
+				studentsQueue, 
+				studentsByGroup[student.priorityOne],
+				studentsByGroup[student.priorityThree],
+				true
+			);
+			if (!isSecondGroupReordered && studentsByGroup[student.priorityThree] != undefined) {
+				reorderGroups(
+					student, 
+					studentsByGroup[student.priorityThree],
+					groups.find((group) => group.id == student.priorityThree).count,
+					studentsQueue, 
+					studentsByGroup[student.priorityOne],
+					studentsByGroup[student.priorityTwo]
+				);
+			}
+		}
+	}
+	return studentsByGroup;
+}
+
+// =======================================================
+
 const firstNames = [
 	"Вадим", "Валентин", "Валерий", "Василий", "Вениамин", "Евгений", "Евдоким", "Егор", "Захар", "Зиновий", 
 	"Тимофей", "Тихон", "Тарас", "Самсон", "Себастьян", "Дмитрий", "Ярослав", "Владимир", "Максим", "Петр",
@@ -148,55 +286,66 @@ app.post("/students/generate", (req, res) => {
 });
 
 app.post("/students/statistics/export", (req, res) => {
-	const groups = req.body.groups;
-	const ratedStudents = req.body.students;
+	
+	database.all("select * from groups", (err, groups) => {
+		if (err != null || err != undefined) {
+			res.json(error("возникла неизвестная проблема с базой данных"));
+		} else {
+			database.all("select * from students", (err, dbStudents) => {
+				if (err != null && err != undefined) {
+					res.json(error("возникла неизвестная проблема с базой данных"));
+				} else {
+					const students = ratedStudents(groups, dbStudents);
+					
+					const workbook = new excel.Workbook();
+					const worksheet = workbook.addWorksheet("кол-во поданных заявлений");
 
-	const workbook = new excel.Workbook();
-	const worksheet = workbook.addWorksheet("кол-во поданных заявлений");
+					const columns = [];
 
-	const columns = [];
+					columns.push({ header: "Номер", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "number", width: 10 });
+					columns.push({ header: "Группа", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "groupName", width: 23 });
+					columns.push({ header: "Кол-во поданных заявлений", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "count", width: 40 });
+					columns.push({ header: "Максимальное кол-во заявлений", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "maxCount", width: 46 });
+					columns.push({ header: "Процент проходимости", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "percent", width: 30 });
 
-	columns.push({ header: "Номер", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "number", width: 10 });
-	columns.push({ header: "Группа", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "groupName", width: 15 });
-	columns.push({ header: "Кол-во поданных заявлений", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "count", width: 40 });
-	columns.push({ header: "Максимальное кол-во заявлений", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "maxCount", width: 46 });
-	columns.push({ header: "Процент проходимости", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "percent", width: 30 });
+					worksheet.columns = columns;
 
-	worksheet.columns = columns;
+					let number = 1;
 
-	let number = 1;
+					groups.forEach((group) => {
+						const count = students[group.id] == undefined ? 0 : students[group.id].length;
+						const maxCount = group.count;
 
-	groups.forEach((group) => {
-		const count = ratedStudents[group.id] == undefined ? 0 : ratedStudents[group.id].length;
-		const maxCount = group.count;
+						const stat = {
+							number: number,
+							groupName: group.name,
+							count: count,
+							maxCount: maxCount,
+							percent: Math.round(count / maxCount * 100) + "%"
+						};
+						worksheet.addRow(stat);
 
-		const stat = {
-			number: number,
-			groupName: group.name,
-			count: count,
-			maxCount: maxCount,
-			percent: Math.round(count / maxCount * 100) + "%"
-		};
-		worksheet.addRow(stat);
+						number += 1;
+					});
 
-		number += 1;
+					worksheet.getRow(1).eachCell((cell) => {
+						cell.font = { bold: true };
+					});
+
+					console.log(worksheet);
+
+					const filenames = fs.readdirSync(path.resolve(__dirname, 'static'));
+					filenames.forEach((file) => fs.unlinkSync(path.resolve(__dirname, 'static/' + file)));
+
+					const filename = "статистика_поданных_заявлений"
+					const xls_path = path.resolve(__dirname, `static/${filename}.xlsx`);
+					workbook.xlsx.writeFile(xls_path).then(() => {
+						res.json(success(`${BASE_URL}/static/${filename}.xlsx`));
+					});
+				}
+			})
+		}
 	});
-
-	worksheet.getRow(1).eachCell((cell) => {
-		cell.font = { bold: true };
-	});
-
-	console.log(worksheet);
-
-	const filenames = fs.readdirSync(path.resolve(__dirname, 'static'));
-	filenames.forEach((file) => fs.unlinkSync(path.resolve(__dirname, 'static/' + file)));
-
-	const filename = "статистика_поданных_заявлений"
-	const xls_path = path.resolve(__dirname, `static/${filename}.xlsx`);
-	workbook.xlsx.writeFile(xls_path).then(() => {
-		res.json(success(`${BASE_URL}/static/${filename}.xlsx`));
-	});
-
 });
 
 app.post("/students/export", (req, res) => {
@@ -369,6 +518,8 @@ app.post('/students/import', (req, res) => {
   			
   			database.serialize(() => {
   				
+  				const mappedGroups = {};
+
   				workbook.worksheets.forEach((sheet) => {
 		  			sheet.eachRow({}, (row, number) => {
 		  				
@@ -384,44 +535,44 @@ app.post('/students/import', (req, res) => {
 		    				const secondGroup = row.values[8];
 		    				const thirdGroup = row.values[9];
 
-		    				const foundedFirstGroup = groups.find((group) => group.name.toLowerCase().indexOf(firstGroup.trim().toLowerCase()) == 0);
-		    				let priorityOne = -1;
-		    				if (foundedFirstGroup == undefined || foundedFirstGroup == null) {
-		    					database.run("replace into groups (name) values (?)", [ `${firstGroup.trim()}-${year}` ]);	    					
-		    					priorityOne = currentGroupId + 1;
-		    					currentGroupId++;
-		    				} else {
-		    					priorityOne = foundedFirstGroup.id;
+		    				function checkGroup(foundGroup, group, currentId, mappedGroups, db) {
+		    					if (foundGroup == undefined || foundGroup == null) {
+		    						if (mappedGroups[group] != undefined && mappedGroups[group] != null) {
+		    							return mappedGroups[group];
+		    						} else {
+		    							const groupName = `${group.trim()}-${year}`;
+			    						db.run("replace into groups (name, count) values (?, ?)", [ groupName, 25 ]);	    					
+			    						const newPriority = currentId + 1;
+			    						mappedGroups[groupName] = newPriority;
+			    						return newPriority;	
+		    						}
+			    				} else {
+			    					return foundGroup.id;
+			    				}
 		    				}
+
+		    				const foundedFirstGroup = groups.find((group) => group.name.toLowerCase().indexOf(firstGroup.trim().toLowerCase()) == 0);
+		    				const priorityOne = checkGroup(foundedFirstGroup, firstGroup, currentGroupId, mappedGroups, database);
+		    				if (currentGroupId < priorityOne) currentGroupId++;
+
 
 		    				let priorityTwo = -1;
 		    				if (secondGroup != undefined && secondGroup != null && secondGroup.trim().length >= 2) {
 		    					const foundedSecondGroup = groups.find((group) => group.name.toLowerCase().indexOf(secondGroup.trim().toLowerCase()) == 0);
-								if (foundedSecondGroup == undefined || foundedSecondGroup == null) {
-									database.run("replace into groups (name) values (?)", [ `${secondGroup.trim()}-${year}` ]);
-									priorityTwo = currentGroupId + 1;
-									currentGroupId++;
-								} else {
-									priorityTwo = foundedSecondGroup.id;
-								}
+		    					priorityTwo = checkGroup(foundedSecondGroup, secondGroup, currentGroupId, mappedGroups, database);
+		    					if (currentGroupId < priorityTwo) currentGroupId++;
 		    				}
 
 		    				let priorityThree = -1;
-
 		    				if (thirdGroup != undefined && thirdGroup != null && thirdGroup.trim().length >= 2) {
 		    					const foundedThirdGroup = groups.find((group) => group.name.toLowerCase().indexOf(thirdGroup.trim().toLowerCase()) == 0);
-								if (foundedThirdGroup == undefined || foundedThirdGroup == null) {
-									database.run("replace into groups (name) values (?)", [ `${thirdGroup.trim()}-${year}` ]);
-									priorityThree = currentGroupId + 1;
-									currentGroupId++;
-								} else {
-									priorityThree = foundedThirdGroup.id;
-								}
+		    					priorityThree = checkGroup(foundedThirdGroup, thirdGroup, currentGroupId, mappedGroups, database);
+		    					if (currentGroupId < priorityThree) currentGroupId++;
 		    				}
 
-							const student = [ fio, parseFloat(rating), priorityOne, priorityTwo, priorityThree, "", 0, -1, "", "", "", "Не указано", "", "", "", "", 0, 1, hasOriginalDocs, 0, "Не указано", "Не указано", "Не указано", "", "", "", apartaments, "", "", "" ];
+							const student = [ fio, parseFloat(rating), priorityOne, priorityTwo, priorityThree, "", 0, "", "", "", "Не указано", "", "", "", "", 0, 1, hasOriginalDocs, 0, "Не указано", "Не указано", "Не указано", "", "", "", apartaments, "", "", "" ];
 
-							const sql = "insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, professionId, documentSubmissionDate, snils, locality, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, prevEducationDate, prevEducationOrg, documentOrgCode) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+							const sql = "insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, documentSubmissionDate, snils, locality, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, prevEducationDate, prevEducationOrg, documentOrgCode) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 							database.run(sql, student);
 		    			}
@@ -454,6 +605,25 @@ app.get("/students", (req, res) => {
 	});
 });
 
+app.get("/ratedStudents", (req, res) => {
+	database.all("select * from groups", (err, groups) => {
+		if (err != null || err != undefined) {
+			res.json(error("возникла неизвестная проблема с базой данных"));
+		} else {
+			database.all("select * from students", (err, dbStudents) => {
+				if (err != null && err != undefined) {
+					res.json(error("возникла неизвестная проблема с базой данных"));
+				} else {
+					const students = ratedStudents(groups, dbStudents);
+					res.json(success({
+						groups: groups,
+						students: students
+					}));
+				}
+			})
+		}
+	});
+});
 
 app.post("/students/remove", (req, res) => {
 	const student = req.body;

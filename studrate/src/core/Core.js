@@ -1,3 +1,4 @@
+
 function addToStudentArray(students, student) {
     if (students == undefined || students == null) return;
     if (students.length == 0) {

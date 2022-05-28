@@ -6,7 +6,6 @@ import StudentBox from './StudentBox.js';
 import LoadingDialog from '../core/LoadingDialog.js';
 
 import constants from '../core/Constants.js';
-import ratedStudents from '../core/Core.js';
 
 import axios from 'axios';
 import React from 'react';
@@ -28,15 +27,12 @@ export default class StudentDashboard extends React.Component {
 	}
 
 	update() {
-		axios.get(constants.restData.getGroups).then(groupsResponse => {
-			axios.get(constants.restData.getStudents).then(studentsResponse => {
-				if (groupsResponse.data["status"] == "success" && studentsResponse.data["status"] == "success") {
-					const groups = groupsResponse.data["result"];
-					const students = ratedStudents(groups, studentsResponse.data["result"]);
-					this.setState({ groups: groups, students: students });
-				}
-			});
-		});
+		axios.get(constants.restData.getStudents).then(response => {
+			if (response.data["status"] == "success") {
+				const result = response.data["result"];
+				this.setState({ groups: result.groups, students: result.students });
+			}
+		});		
 	}
 
 	toggleSearch(searchType) {
@@ -83,10 +79,7 @@ export default class StudentDashboard extends React.Component {
 		    }} onStartImporting={() => {
 		    	this.setState({ isLoading: true });
 		    }} onStatisticsImport={() => {
-		    	axios.post(constants.restData.postStatisticsExport, {
-		    		groups: this.state.groups,
-		    		students: this.state.students
-		    	}).then(response => {
+		    	axios.post(constants.restData.postStatisticsExport).then(response => {
 	    			const link = document.createElement("a");
 					link.href = response.data.result;
 					link.style = "display: none";

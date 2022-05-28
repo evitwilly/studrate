@@ -10,7 +10,7 @@ export default {
 		"postGroupRemove" : BASE_URL + "/groups/remove",
 		"postGroupUpdate" : BASE_URL + "/groups/update",
 
-		"getStudents" : BASE_URL + "/students",
+		"getStudents" : BASE_URL + "/ratedStudents",
 		"postStudentAdd" : BASE_URL + "/students/add",
 		"postStudentRemove" : BASE_URL + "/students/remove",
 		"postStudentUpdate" : BASE_URL + "/students/update",

@@ -95,7 +95,9 @@ database.serialize(() => {
 	});
 
 	professions.forEach(profession => {
-		database.run("insert into professions (code, name, abbrevation) values (?, ?, ?)", [ profession.code, profession.name, profession.abbrevation ]);
+		database.run("insert into professions (code, name, abbrevation) values (?, ?, ?)", [ 
+			profession.code, profession.name, profession.abbrevation 
+		]);
 	});
 
 });
