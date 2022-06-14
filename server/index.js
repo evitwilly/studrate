@@ -360,36 +360,107 @@ app.post("/students/export", (req, res) => {
 		res.json(error("студентов нет"));
 	} else {
 		const workbook = new excel.Workbook();
-		const worksheet = workbook.addWorksheet("студенты_" + group.name);
+		const worksheet = workbook.addWorksheet("студенты_" + group.name, {
+			 headerFooter: {firstHeader: "Hello Exceljs"}
+		});
 
 		const columns = [];
 
+		var endMergedCell = "";
 		if (type == "xls") {
 			columns.push({ header: "Номер", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "number", width: 10 });
-			if (params.isFio) columns.push({ header: "ФИО", key: "fio", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
-			if (params.isRating) columns.push({ header: "Средний балл", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "rating", width: 25 });
-			if (params.isBirthday) columns.push({ header: "Дата рождения", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "birthDate", width: 30 });
-			if (params.isGender) columns.push({ header: "Пол", key: "gender", style: { alignment: { vertical: 'middle', horizontal: 'left' } },  width: 15 });
-			if (params.isProfession) columns.push({ header: "Специальность", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "profession", width: 100 });
-			if (params.isDocumentSubmissionDate) columns.push({ header: "Дата подачи документов", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "documentSubmissionDate", width: 40 });
-			if (params.isDocumentType) columns.push({ header: "Тип документа", key: "documentType", style: { alignment: { vertical: 'middle', horizontal: 'left' } },  width: 50 });
-			if (params.isDocumentSeria) columns.push({ header: "Серия документа", key: "documentSeria", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
-			if (params.isDocumentNumber) columns.push({ header: "Номер документа", key: "documentNumber", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
-			if (params.isDocumentIssueDate) columns.push({ header: "Дата выдачи документа", key: "documentIssueDate", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
-			if (params.isDocumentGiver) columns.push({ header: "Кем выдан", key: "documentGiver", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
-			if (params.includeIsLimitedOpports) columns.push({ header: "Закончил специальную организацию для учащихся с ОВЗ", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "isLimitedOpports", width: 80 });
-			if (params.isApartaments) columns.push({ header: "Потребность в общежитии", key: "apartaments", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
-			if (params.includeHasMedicine) columns.push({ header: "Имеется медицинская справка", key: "hasMedicine", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
-			if (params.includeHasOriginalDocs) columns.push({ header: "Поданы оригиналы документов", key: "hasOriginalDocs", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
-			if (params.includeIsInternationalContract) columns.push({ header: "Обучается по международному договору", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "isInternationalContract", width: 40 });
-			if (params.isEducationLevel) columns.push({ header: "Уровень образования", key: "educationLevel", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
-			if (params.isEducationType) columns.push({ header: "Форма образования", key: "educationType", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
-			if (params.isEducationFinancials) columns.push({ header: "Финансирование", key: "educationFinancials", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
-			if (params.isResidentialAddress) columns.push({ header: "Адрес проживания", key: "residentialAddress", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
-			if (params.isRegistrationAddress) columns.push({ header: "Адрес регистрации", key: "registrationAddress", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
-			if (params.isBirthPlace) columns.push({ header: "Место рождения", key: "birthPlace", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
-			if (params.isSnils) columns.push({ header: "СНИЛС", key: "snils", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });	
-			if (params.isLocality) columns.push({ header: "Населенный пункт", key: "locality", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+			if (params.isFio) {
+				columns.push({ header: "ФИО", key: "fio", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+				endMergedCell = "B1";
+			}
+			if (params.isRating) {
+				columns.push({ header: "Средний балл", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "rating", width: 25 });
+				endMergedCell = "C1";
+			}
+			if (params.isBirthday) {
+				columns.push({ header: "Дата рождения", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "birthDate", width: 30 });
+				endMergedCell = "D1";
+			}
+			if (params.isGender) {
+				columns.push({ header: "Пол", key: "gender", style: { alignment: { vertical: 'middle', horizontal: 'left' } },  width: 15 });
+				endMergedCell = "E1";
+			}
+			if (params.isDocumentSubmissionDate) {
+				columns.push({ header: "Дата подачи документов", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "documentSubmissionDate", width: 40 });
+				endMergedCell = "F1";
+			}
+			if (params.isDocumentType) {
+				columns.push({ header: "Тип документа", key: "documentType", style: { alignment: { vertical: 'middle', horizontal: 'left' } },  width: 50 });
+				endMergedCell = "G1";
+			}
+			if (params.isDocumentSeria) {
+				columns.push({ header: "Серия документа", key: "documentSeria", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+				endMergedCell = "H1";
+			}
+			if (params.isDocumentNumber) {
+				columns.push({ header: "Номер документа", key: "documentNumber", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+				endMergedCell = "I1";
+			}	
+			if (params.isDocumentIssueDate) {
+				columns.push({ header: "Дата выдачи документа", key: "documentIssueDate", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+				endMergedCell = "J1";
+			}
+			if (params.isDocumentGiver) {
+				columns.push({ header: "Кем выдан", key: "documentGiver", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+				endMergedCell = "K1";
+			}
+			if (params.includeIsLimitedOpports) {
+				columns.push({ header: "Закончил специальную организацию для учащихся с ОВЗ", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "isLimitedOpports", width: 80 });
+				endMergedCell = "L1";
+			}
+			if (params.isApartaments) {
+				columns.push({ header: "Потребность в общежитии", key: "apartaments", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+				endMergedCell = "M1";
+			}
+			if (params.includeHasMedicine) {
+				columns.push({ header: "Имеется медицинская справка", key: "hasMedicine", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+				endMergedCell = "N1";
+			}
+			if (params.includeHasOriginalDocs) {
+				columns.push({ header: "Поданы оригиналы документов", key: "hasOriginalDocs", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 40 });
+				endMergedCell = "O1";
+			}	
+			if (params.includeIsInternationalContract) {
+				columns.push({ header: "Обучается по международному договору", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, key: "isInternationalContract", width: 40 });
+				endMergedCell = "P1";
+			}
+			if (params.isEducationLevel) {
+				columns.push({ header: "Уровень образования", key: "educationLevel", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+				endMergedCell = "Q1";
+			}
+			if (params.isEducationType) {
+				columns.push({ header: "Форма образования", key: "educationType", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+				endMergedCell = "R1";
+			}
+			if (params.isEducationFinancials) {
+				columns.push({ header: "Финансирование", key: "educationFinancials", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+				endMergedCell = "S1";
+			}
+			if (params.isResidentialAddress) {
+				columns.push({ header: "Адрес проживания", key: "residentialAddress", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+				endMergedCell = "T1";
+			}
+			if (params.isRegistrationAddress) {
+				columns.push({ header: "Адрес регистрации", key: "registrationAddress", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+				endMergedCell = "U1";
+			}
+			if (params.isBirthPlace) {
+				columns.push({ header: "Место рождения", key: "birthPlace", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+				endMergedCell = "V1";
+			}
+			if (params.isSnils) {
+				columns.push({ header: "СНИЛС", key: "snils", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });	
+				endMergedCell = "W1";
+			}
+			if (params.isLocality) {
+				columns.push({ header: "Населенный пункт", key: "locality", style: { alignment: { vertical: 'middle', horizontal: 'left' } }, width: 50 });
+				endMergedCell = "X1";
+			}
 		} else {
 			columns.push({ header: "Фамилия", key: "lastName", width: 50 });
 			columns.push({ header: "Имя", key: "firstName", width: 50 });
@@ -433,10 +504,16 @@ app.post("/students/export", (req, res) => {
 
 		worksheet.columns = columns;
 
-		let studentNumber = 1;
-
 		const profession = professions.find((profession) => group.name.toLowerCase().startsWith(profession.abbrevation.toLowerCase()));
 
+		worksheet.insertRow(1, {});
+		worksheet.getRow(1).font = { bold: true, size: 12 };
+		worksheet.getRow(1).height = 50;
+		worksheet.mergeCells('A1:' + endMergedCell);
+		worksheet.getCell(endMergedCell).value = profession == undefined || profession == null ? "" : profession.code + " " + profession.name;
+		worksheet.getCell(endMergedCell).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+
+		let studentNumber = 1;
 		students.forEach((student) => {
 			student.number = studentNumber;
 			student.gender = student.isFemale ? "Женский" : "Мужской";
@@ -455,10 +532,8 @@ app.post("/students/export", (req, res) => {
 			student.isLimitedOpports = student.isLimitedOpports == 1 ? "да" : "нет";
 			student.hasMedicine = student.hasMedicine == 1 ? "да" : "нет";
 			
-			if (type == "xls") {
-				student.profession = profession == undefined || profession == null ? ""
-					: profession.code + " " + profession.name;
-			} else {
+
+			if (type == "csv") {
 				student.professionCode = profession == undefined || profession == null ? "" : profession.code;
 			}
 		
@@ -466,7 +541,7 @@ app.post("/students/export", (req, res) => {
 			studentNumber++;
 		});
 
-		worksheet.getRow(1).eachCell((cell) => {
+		worksheet.getRow(2).eachCell((cell) => {
 			cell.font = { bold: true };
 		});
 

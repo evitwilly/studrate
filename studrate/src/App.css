@@ -6,6 +6,14 @@
   color: #999 !important;
 }
 
+.ml_8 {
+    margin-left: 8px !important;
+}
+
+.mr_16 {
+    margin-right: 16px !important;
+}
+
 .mt_8 {
     margin-top: 8px !important;
 }

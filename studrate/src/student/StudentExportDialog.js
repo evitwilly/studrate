@@ -16,6 +16,7 @@ export default class StudentExportDialog extends React.Component {
 			isRating: true,
 			isBirthday: false,
 			isGender: false,
+			isSortingByRating: true,
 			isProfession: false,
 			isDocumentSubmissionDate: false,
 			isDocumentType: false,
@@ -214,6 +215,18 @@ export default class StudentExportDialog extends React.Component {
 						this.setState({ isLocality: !this.state.isLocality })
 					}} type="checkbox"/></label>
 
+				<div className="student_export_dialog_subtitle mt_16">Упорядочивание по:</div>
+				<div className="ml_8">
+					<span className="core_dialog_radiogroup_option_text">ФИО</span>
+					<input className="core_dialog_radiogroup_check mr_16" type="radio" checked={!this.state.isSortingByRating} value="male" onChange={(event) => {
+						this.setState({isSortingByRating: false});
+					}} />
+					<span className="core_dialog_radiogroup_option_text">баллу</span>
+					<input className="core_dialog_radiogroup_check" type="radio" checked={this.state.isSortingByRating} value="female" onChange={(event) => {
+						this.setState({isSortingByRating: true});
+					}}/>
+				</div>
+
 			</div>;
 		} else {
 			fieldBoxView = <div className="student_export_dialog_subtitle">Данный вид экспорта применяется для того, чтобы выгрузить данные из этой программы в <a href="https://netspo.edu22.info">АИС</a></div>;
@@ -238,10 +251,16 @@ export default class StudentExportDialog extends React.Component {
 				{fieldBoxView}
 
 				<div className="core_dialog_apply_button mt_16" onClick={() => {
+					const sortedStudents = this.state.isSortingByRating ? 
+						this.props.students : [...this.props.students].sort(function(firstStudent, secondStudent) { 
+							return firstStudent.fio.toLowerCase().trim() < secondStudent.fio.toLowerCase().trim() ? -1 : 
+								firstStudent.fio.toLowerCase().trim() > secondStudent.fio.toLowerCase().trim() ? 1 : 0 
+						});
+
 					axios.post(constants.restData.postStudentExport, {
 						type: this.state.isXls ? "xls" : "csv",
 						group: this.props.group, 
-						students: this.props.students,
+						students: sortedStudents,
 						professions: this.state.professions,
 						isFio: this.state.isFio,
 						isRating: this.state.isRating,
