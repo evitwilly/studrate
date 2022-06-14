@@ -62,7 +62,14 @@ export default class StudentDashboard extends React.Component {
 		this.state.groups.forEach((group) => {
 			if (groupKey.length <= 0 || group.name.toLowerCase().indexOf(groupKey.toLowerCase()) != -1) {
 				const items = this.state.students[group.id];
-				groupDivs.push(<StudentBox key={group.id.toString()} group={group} groups={this.state.groups} search={studentKey} students={items} update={this.update} />);
+
+				const hasAdded = (studentKey.length > 0) 
+					? items != undefined && items.filter((item) => item.fio.toLowerCase().indexOf(studentKey.toLowerCase()) != -1).length > 0
+					: true;
+
+				if (hasAdded) {
+					groupDivs.push(<StudentBox key={group.id.toString()} group={group} groups={this.state.groups} search={studentKey} students={items} update={this.update} />);
+				}
 			}
 		});
 
