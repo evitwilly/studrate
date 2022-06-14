@@ -9,6 +9,32 @@
 	margin-bottom: 16px;
 }
 
+.group:nth-child(3n - 1) {
+	margin-left: 2%;
+	margin-right: 2%;
+}
+
+
+@media (max-width: 1200px) { 
+	.group {
+		width: 44%;
+	}
+	.group:nth-child(n) {
+		margin-right: 2%;
+	}
+	.group:nth-child(n + 1) {
+		margin-left: 2%;
+	}
+}
+
+@media (max-width: 900px) { 
+	.group {
+		width: 90%;
+		margin-left: 0px;
+	}
+}
+
+
 .collapsed_button {
 	width: 56px;
 	height: 56px;
@@ -28,11 +54,6 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-}
-
-.group:nth-child(3n - 1) {
-	margin-left: 2%;
-	margin-right: 2%;
 }
 
 .group_title {

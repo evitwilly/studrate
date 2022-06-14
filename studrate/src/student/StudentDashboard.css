@@ -5,3 +5,15 @@
 	margin: 16px 32px;
 	margin-top: 0px;
 }
+
+@media (max-width: 1200px) { 
+	.group_container {
+		flex: 0 0 44%;
+	}
+}
+
+@media (max-width: 900px) { 
+	.group_container {
+		flex: 0 0 90%;
+	}
+}
