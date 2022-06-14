@@ -43,7 +43,7 @@ export default class Groups extends React.Component {
 		const groupDivs = this.state.groups.filter((group) => {
 			return group.name.toLowerCase().indexOf(this.state.searchKey.toLowerCase()) != -1;
 		}).map((group) => {
-			return <Group group={group} edit={() => this.setState({ isEditingGroup: {
+			return <Group key={group.id.toString()} group={group} edit={() => this.setState({ isEditingGroup: {
 				isShowingDialog: true, group: group
 			} })} 
 				update={() => this.getGroups()} showDialog={() => {

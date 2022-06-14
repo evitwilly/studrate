@@ -150,7 +150,7 @@ export default class StudentBox extends React.Component {
 				if (isVisible) {
 
 					const colorClass = index >= constants.studentCount ? " color_grey_300" : "";
-					studentElement = <div className="student" key={index.toString()} onClick={(event) => {
+					studentElement = <div className="student" key={student.id.toString()} onClick={(event) => {
 						this.showStuudentPopupDialog(student, event.clientX, event.clientY);
 					}} onDoubleClick={() => this.showStudentUpdateDialog(student)}>
 						<p className={"student_name" + colorClass}>{index + 1}. {student.fio}</p>

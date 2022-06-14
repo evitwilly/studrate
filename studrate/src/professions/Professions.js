@@ -41,7 +41,7 @@ export default class Professions extends React.Component {
 		const professionDivs = this.state.professions.filter((profession) => {
 			return profession.name.toLowerCase().indexOf(this.state.searchKey.toLowerCase()) != -1;
 		}).map((profession) => {
-			return <div className="profession_item">
+			return <div className="profession_item" key={profession.id.toString()}>
 				<div className="profession_code">{profession.code}</div> 
 				<div className="profession_name">{profession.name + " (" + profession.abbrevation + ")"}</div>
 
