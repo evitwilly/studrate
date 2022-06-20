@@ -18,6 +18,7 @@ export default {
 		"postStudentImport" : BASE_URL + "/students/import",
 		"postStudentExport": BASE_URL + "/students/export",
 		"postStudentGenerate" : BASE_URL + "/students/generate",
+		"postStudentTitlesExport" : BASE_URL + "/students/titlepage/export",
  
 		"getProfessions" : BASE_URL + "/professions",
 		"postProfessionAdd" : BASE_URL + "/professions/add",

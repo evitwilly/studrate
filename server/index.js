@@ -5,7 +5,9 @@ const path = require('path');
 const fileUpload = require('express-fileupload');
 const excel = require("exceljs");
 const fs = require("fs");
+const docx = require("docx");
 const iconv = require('iconv-lite');
+const zipFolder = require('zip-folder');
 
 const app = express();
 app.use("/static", express.static(path.join(__dirname, 'static')));
@@ -13,7 +15,6 @@ app.use(express.static(path.join(__dirname, "../studrate/build")));
 app.use(express.json());
 app.use(cors());
 app.use(fileUpload());
-
 
 const BASE_URL = "http://localhost:3434"
 
@@ -348,6 +349,139 @@ app.post("/students/statistics/export", (req, res) => {
 	});
 });
 
+app.post("/students/titlepage/export", async (req, res) => {
+	const params = req.body;
+
+	const students = params.students;
+	const professions = params.professions;
+	const group = params.group;
+
+	function header(str) {
+		return new docx.Paragraph({
+			spacing: {
+				after: 130
+			},
+			alignment: docx.AlignmentType.CENTER,
+			children: [
+				new docx.TextRun({
+					text: str,
+					size: 28,
+					bold: true
+				})
+			]
+		});
+	}
+
+	function row(title, value, isBold) {
+		return new docx.TableRow({
+			children: [
+				new docx.TableCell({
+					children: [ 
+						new docx.Paragraph({
+							children: [
+								new docx.TextRun({
+									text: title,
+									bold: true,
+									size: 24
+								})
+							]
+							
+						}) 
+					]
+				}),
+				new docx.TableCell({
+					children: [ 
+						new docx.Paragraph({
+							children: [
+								new docx.TextRun({
+									text: value,
+									bold: isBold,
+									size: 24
+								})
+							]
+							
+						}) 
+					]
+				}),
+			]
+		});
+	}
+
+	function documentByParams(
+		profession, fio, educationType, 
+		documentNumber, documentIssueDate, 
+		rating, birthDate, school, year, 
+		birthPlace, isNeedApartament
+	) {
+		return new docx.Document({
+			sections: [{
+				properties: {},
+				children: [
+					header(profession),
+					new docx.Table({
+						width: {
+	        				size: 9000,
+	        				type: docx.WidthType.DXA,
+	    				},
+						rows: [
+							row("Ф.И.О", fio, true),
+							row("форма обучения", educationType),
+							row("номер аттестата", documentNumber),
+							row("дата выдачи аттестата", documentIssueDate),
+							row("средний балл аттестата", rating),
+							row("дата рождения", birthDate),
+							row("образовательное учреждение", school),
+							row("дата окончания учреждения", year),
+							row("место жительства", birthPlace),
+							row("общежитие", isNeedApartament),
+						]
+					})
+				]
+			}]
+		});
+	}
+
+	fs.rmSync("static/zip", { recursive: true, force: true });
+
+	const filenames = fs.readdirSync(path.resolve(__dirname, 'static'));
+	filenames.forEach((file) => fs.unlinkSync(path.resolve(__dirname, 'static/' + file)));
+
+	fs.mkdirSync("static/zip");
+
+	const profession = professions.find((profession) => group.name.toLowerCase()
+		.startsWith(profession.abbrevation.toLowerCase()));
+
+	let index = 0;
+	while (index < students.length) {
+		const student = students[index];
+		const doc = documentByParams(
+			profession.name,
+			student.fio,
+			student.educationType.toLowerCase(),
+			student.certificateNumber,
+			student.documentIssueDate,
+			student.rating,
+			student.birthDate,
+			student.prevEducationOrg,
+			student.prevEducationDate,
+			student.birthPlace,
+			student.apartaments.toLowerCase()
+		);
+
+		const buffer = await docx.Packer.toBuffer(doc);
+		const editedFio = student.fio.split(" ").join("_")
+		fs.writeFileSync(`static/zip/${editedFio}.docx`, buffer);
+
+		index++;
+	}
+
+	const zipName = `титульники_${group.name}.zip`;
+
+	zipFolder("static/zip", `static/${zipName}`, function(error) {
+		res.json(success(`${BASE_URL}/static/${zipName}`));
+	});
+})
+
 app.post("/students/export", (req, res) => {
 	const params = req.body;
 
@@ -647,7 +781,7 @@ app.post('/students/import', (req, res) => {
 
 							const student = [ fio, parseFloat(rating), priorityOne, priorityTwo, priorityThree, "", 0, "", "", "", "Не указано", "", "", "", "", 0, 1, hasOriginalDocs, 0, "Не указано", "Не указано", "Не указано", "", "", "", apartaments, "", "", "" ];
 
-							const sql = "insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, documentSubmissionDate, snils, locality, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, prevEducationDate, prevEducationOrg, documentOrgCode) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+							const sql = "insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, documentSubmissionDate, snils, locality, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, prevEducationDate, prevEducationOrg, documentOrgCode, certificateNumber) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 							database.run(sql, student);
 		    			}
@@ -726,7 +860,7 @@ app.post("/students/add", (req, res) => {
 		res.json(error("не указана первая группа для студента"));
 	} else {
 		
-		database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, documentSubmissionDate, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, snils, locality, prevEducationDate, prevEducationOrg, documentOrgCode) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+		database.run("insert into students (fio, rating, priorityOne, priorityTwo, priorityThree, birthDate, isFemale, documentSubmissionDate, documentType, documentSeria, documentNumber, documentIssueDate, documentGiver, isLimitedOpports, hasMedicine, hasOriginalDocs, isInternationalContract, educationLevel, educationType, educationFinancials, residentialAddress, registrationAddress, birthPlace, apartaments, snils, locality, prevEducationDate, prevEducationOrg, documentOrgCode, certificateNumber) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
 			[ 
 				student.fio, student.rating, student.priorityOne, student.priorityTwo,
 				student.priorityThree, student.birthDate, student.isFemale,
@@ -737,7 +871,7 @@ app.post("/students/add", (req, res) => {
 				student.educationType, student.educationFinancials, student.residentialAddress,
 				student.registrationAddress, student.birthPlace, student.apartaments, 
 				student.snils, student.locality, student.prevEducationDate,
-				student.prevEducationOrg, student.documentOrgCode
+				student.prevEducationOrg, student.documentOrgCode, student.certificateNumber
 			], (err) => {
 			if (err != null && err != undefined) {
 				res.json(error("возникли проблемы при добавлении студента в базу данных"));
@@ -770,10 +904,10 @@ app.post("/students/update", (req, res) => {
 			student.educationType, student.educationFinancials, student.residentialAddress,
 			student.registrationAddress, student.birthPlace, student.apartaments, 
 			student.snils, student.locality, student.prevEducationDate, student.prevEducationOrg, 
-			student.documentOrgCode, student.id 
+			student.documentOrgCode, student.certificateNumber, student.id, 
 		]
 
-		database.run("update students set fio = ?, rating = ?, priorityOne = ?, priorityTwo = ?, priorityThree = ?, birthDate = ?, isFemale = ?, documentSubmissionDate = ?, documentType = ?, documentSeria = ?, documentNumber = ?, documentIssueDate = ?, documentGiver = ?, isLimitedOpports = ?, hasMedicine = ?, hasOriginalDocs = ?, isInternationalContract = ?, educationLevel = ?, educationType = ?, educationFinancials = ?, residentialAddress = ?, registrationAddress = ?, birthPlace = ?, apartaments = ?, snils = ?, locality = ?, prevEducationDate = ?, prevEducationOrg = ?, documentOrgCode = ? where id = ?", 
+		database.run("update students set fio = ?, rating = ?, priorityOne = ?, priorityTwo = ?, priorityThree = ?, birthDate = ?, isFemale = ?, documentSubmissionDate = ?, documentType = ?, documentSeria = ?, documentNumber = ?, documentIssueDate = ?, documentGiver = ?, isLimitedOpports = ?, hasMedicine = ?, hasOriginalDocs = ?, isInternationalContract = ?, educationLevel = ?, educationType = ?, educationFinancials = ?, residentialAddress = ?, registrationAddress = ?, birthPlace = ?, apartaments = ?, snils = ?, locality = ?, prevEducationDate = ?, prevEducationOrg = ?, documentOrgCode = ?, certificateNumber = ? where id = ?", 
 			data, (err) => {
 			if (err != null && err != undefined) {
 				res.json(error("возникли проблемы при добавлении студента в базу данных"));

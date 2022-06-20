@@ -123,7 +123,7 @@ export default class StudentBox extends React.Component {
 						isShowingDialog: true
 					}
 				});
-			}}>Экспорт в Excel файл</div>;
+			}}>Экспорт</div>;
 
 			const isVisibleExpandButton = studentKey.length <= 0 && students.length > 5;
 			const isCollapsed = this.state.collapsed;

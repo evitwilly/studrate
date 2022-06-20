@@ -50,22 +50,6 @@ export default class Toolbar extends React.Component {
 				<div className="toolbar_button noselect" onClick={() => {
 					this.props.onStatisticsImport();
 				}}>Статистика поданных заявлений</div>
-				<label className="toolbar_button noselect" onChange={(event) => {
-
-					this.props.onStartImporting();
-					
-					const file = event.target.files[0];
-				
-					const formData = new FormData();
-					formData.append("file", file)
-								
-					axios.post(constants.restData.postStudentImport, formData).then((response) => {
-						if (response.data.status == "success") {
-							this.props.update();
-						}
-					});
-					
-				}}><input type="file" />Импорт</label>
 			</div>
 		</div>;
 	}

@@ -5,12 +5,16 @@ import constants from '../core/Constants.js';
 import React from 'react';
 import axios from 'axios';
 
+const xls = 1;
+const csv = 2;
+const title = 3;
+
 export default class StudentExportDialog extends React.Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			isXls: true,
+			tab: xls,
 			isEverything: false,
 			isFio: true,
 			isRating: true,
@@ -49,11 +53,11 @@ export default class StudentExportDialog extends React.Component {
 	}
 
 	render() {
-		const xlsTabStyle = this.state.isXls ? "export_type_box__tab export_type_box__tab_selected" : "export_type_box__tab";
-		const csvTabStyle = !this.state.isXls ? "export_type_box__tab export_type_box__tab_selected" : "export_type_box__tab";		
+		const selectedStyle = "export_type_box__tab export_type_box__tab_selected";
+		const unselectedStyle = "export_type_box__tab";
 
 		let fieldBoxView;
-		if (this.state.isXls) {
+		if (this.state.tab == xls) {
 			fieldBoxView = <div>
 				<div className="student_export_dialog_subtitle">Выберите поля, которые хотите экспортировать:</div>
 			
@@ -228,8 +232,10 @@ export default class StudentExportDialog extends React.Component {
 				</div>
 
 			</div>;
-		} else {
+		} else if (this.state.tab == csv) {
 			fieldBoxView = <div className="student_export_dialog_subtitle">Данный вид экспорта применяется для того, чтобы выгрузить данные из этой программы в <a href="https://netspo.edu22.info">АИС</a></div>;
+		} else {
+			fieldBoxView = <div className="student_export_dialog_subtitle">Получить титульники для каждого студента в zip архиве</div>;	
 		}	
 
 		return <div className="core_container_dialog">
@@ -240,59 +246,77 @@ export default class StudentExportDialog extends React.Component {
 				</div></h4>
 
 				<div className="export_type_box">
-					<div className={xlsTabStyle} onClick={() => {
-						this.setState({ isXls: true });
+					<div className={this.state.tab == xls ? selectedStyle : unselectedStyle} onClick={() => {
+						this.setState({ tab: xls });
 					}}>XLS</div>
-					<div className={csvTabStyle} onClick={() => {
-						this.setState({ isXls: false });
+					<div className={this.state.tab == csv ? selectedStyle : unselectedStyle} onClick={() => {
+						this.setState({ tab: csv });
 					}}>CSV</div>
+					<div className={this.state.tab == title ? selectedStyle : unselectedStyle} onClick={() => {
+						this.setState({ tab: title });
+					}}>Титульники</div>
 				</div>	
 
 				{fieldBoxView}
 
 				<div className="core_dialog_apply_button mt_16" onClick={() => {
-					const sortedStudents = this.state.isSortingByRating ? 
+					if (this.state.tab == title) {
+						axios.post(constants.restData.postStudentTitlesExport, {
+							group: this.props.group,
+							students: this.props.students,
+							professions: this.state.professions
+						}).then(response => {
+							const link = document.createElement("a");
+							link.href = response.data.result;
+							link.style = "display: none";
+							document.body.appendChild(link);
+							link.click();
+							document.body.removeChild(link);
+						})
+					} else {
+						const sortedStudents = this.state.isSortingByRating ? 
 						this.props.students : [...this.props.students].sort(function(firstStudent, secondStudent) { 
 							return firstStudent.fio.toLowerCase().trim() < secondStudent.fio.toLowerCase().trim() ? -1 : 
 								firstStudent.fio.toLowerCase().trim() > secondStudent.fio.toLowerCase().trim() ? 1 : 0 
 						});
 
-					axios.post(constants.restData.postStudentExport, {
-						type: this.state.isXls ? "xls" : "csv",
-						group: this.props.group, 
-						students: sortedStudents,
-						professions: this.state.professions,
-						isFio: this.state.isFio,
-						isRating: this.state.isRating,
-						isBirthday: this.state.isBirthday,
-						isGender: this.state.isGender,
-						isProfession: this.state.isProfession,
-						isDocumentSubmissionDate: this.state.isDocumentSubmissionDate,
-						isDocumentType: this.state.isDocumentType,
-						isDocumentSeria: this.state.isDocumentSeria,
-						isDocumentNumber: this.state.isDocumentNumber,
-						isDocumentIssueDate: this.state.isDocumentIssueDate,
-						isDocumentGiver: this.state.isDocumentGiver,
-						includeIsLimitedOpports: this.state.includeIsLimitedOpports,
-						includeHasMedicine: this.state.includeHasMedicine,
-						includeHasOriginalDocs: this.state.includeHasOriginalDocs,
-						includeIsInternationalContract: this.state.includeIsInternationalContract,
-						isEducationLevel: this.state.isEducationLevel,
-						isEducationType: this.state.isEducationType,
-						isEducationFinancials: this.state.isEducationFinancials,
-						isResidentialAddress: this.state.isResidentialAddress,
-						isRegistrationAddress: this.state.isRegistrationAddress,
-						isBirthPlace: this.state.isBirthPlace,
-						isSnils: this.state.isSnils,
-						isLocality: this.state.isLocality
-					}).then(response => {
-						const link = document.createElement("a");
-						link.href = response.data.result;
-						link.style = "display: none";
-						document.body.appendChild(link);
-						link.click();
-						document.body.removeChild(link);
-					});
+						axios.post(constants.restData.postStudentExport, {
+							type: this.state.tab == xls ? "xls" : "csv",
+							group: this.props.group, 
+							students: sortedStudents,
+							professions: this.state.professions,
+							isFio: this.state.isFio,
+							isRating: this.state.isRating,
+							isBirthday: this.state.isBirthday,
+							isGender: this.state.isGender,
+							isProfession: this.state.isProfession,
+							isDocumentSubmissionDate: this.state.isDocumentSubmissionDate,
+							isDocumentType: this.state.isDocumentType,
+							isDocumentSeria: this.state.isDocumentSeria,
+							isDocumentNumber: this.state.isDocumentNumber,
+							isDocumentIssueDate: this.state.isDocumentIssueDate,
+							isDocumentGiver: this.state.isDocumentGiver,
+							includeIsLimitedOpports: this.state.includeIsLimitedOpports,
+							includeHasMedicine: this.state.includeHasMedicine,
+							includeHasOriginalDocs: this.state.includeHasOriginalDocs,
+							includeIsInternationalContract: this.state.includeIsInternationalContract,
+							isEducationLevel: this.state.isEducationLevel,
+							isEducationType: this.state.isEducationType,
+							isEducationFinancials: this.state.isEducationFinancials,
+							isResidentialAddress: this.state.isResidentialAddress,
+							isRegistrationAddress: this.state.isRegistrationAddress,
+							isBirthPlace: this.state.isBirthPlace,
+							isSnils: this.state.isSnils,
+							isLocality: this.state.isLocality
+						}).then(response => {
+							const link = document.createElement("a");
+							link.href = response.data.result;
+							link.style = "display: none";
+							document.body.appendChild(link);
+							link.click();
+							document.body.removeChild(link);
+						});
+					}
 				}}>Сохранить</div>
 			</div>
 		</div>;

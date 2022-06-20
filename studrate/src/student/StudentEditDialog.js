@@ -110,6 +110,7 @@ export default class StudentEditDialog extends React.Component {
 				prioritySelecting: -1, 
 				error: "",
 			}, 
+			certificateNumber: student != undefined ? student.certificateNumber : "",
 			birthDate: student != undefined ? student.birthDate : "",
 			birthPlace: student != undefined ? student.birthPlace : "",
 			prevEducationDate: student != undefined ? student.prevEducationDate : "",
@@ -245,6 +246,7 @@ export default class StudentEditDialog extends React.Component {
 				snils: this.state.snils,
 				locality: this.state.locality,
 				isFemale: this.state.isFemale,
+				certificateNumber: this.state.certificateNumber,
 				apartaments: this.state.apartaments,
 				prevEducationDate: this.state.prevEducationDate,
 				prevEducationOrg: this.state.prevEducationOrg,
@@ -418,6 +420,10 @@ export default class StudentEditDialog extends React.Component {
 						this.setState({ documentSubmissionDate: event.target.value });
 					}} />
 
+					<input className="core_dialog_input" placeholder="номер аттестата" maxLength="30"
+						value={this.state.certificateNumber} onChange={(event) => {
+							this.setState({ certificateNumber: event.target.value });
+						}}  />
 				
 					<div className="core_dialog_input_label">дата окончания предыдущего обучения:</div>						
 					<InputMask className="core_dialog_input" alwaysShowMask={true} mask="99.99.9999"
